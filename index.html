@@ -15,75 +15,97 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 select-none min-h-screen flex flex-col justify-between p-4 max-w-md mx-auto">
+<body class="bg-slate-950 text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans">
 
-  <!-- Шапка -->
-  <header class="flex justify-between items-center bg-teal-950/80 p-3.5 rounded-2xl border border-teal-800/40">
-    <div>
-      <h1 class="font-bold text-white text-base">Перевёртыш</h1>
-      <span id="proBadge" class="text-[10px] text-teal-300">FREE ТАРИФ (1 блок)</span>
+  <!-- Компактная шапка -->
+  <header class="flex justify-between items-center py-1.5 px-3 bg-slate-900/70 rounded-2xl border border-slate-800/80">
+    <div class="flex items-center gap-2">
+      <span class="text-base">🎴</span>
+      <h1 class="font-bold text-white text-sm tracking-wide">Перевёртыш</h1>
     </div>
-    <button id="buyProBtn" class="bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl shadow active:scale-95">
-      Купить PRO
-    </button>
+    <div id="headerStatusArea">
+      <!-- Динамически меняется на «PRO активен» -->
+      <button id="buyProBtn" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3 py-1 rounded-xl shadow active:scale-95 transition-transform">
+        Купить PRO
+      </button>
+      <div id="proActiveBadge" class="hidden items-center gap-1 bg-teal-500/10 border border-teal-500/30 text-teal-300 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+        <span>★</span> PRO активен
+      </div>
+    </div>
   </header>
 
-  <!-- Список колод -->
-  <div class="flex gap-2 overflow-x-auto py-2 no-scrollbar my-2" id="decksContainer"></div>
+  <!-- Список колод (Блоков) -->
+  <div class="flex gap-2 overflow-x-auto py-1.5 no-scrollbar" id="decksContainer"></div>
 
-  <!-- Карточка -->
-  <main class="flex-1 flex flex-col justify-center items-center my-2">
-    <div id="cardWrapper" class="w-full">
-      <div class="flex items-center justify-between text-xs text-slate-400 px-2 mb-2">
-        <span id="cardCounter">Слово 1 из 3</span>
-        <div class="flex gap-2">
-          <button id="renameDeckBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 active:scale-95 text-[11px]">🏷️ Имя блока</button>
-          <button id="editCardBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 active:scale-95 text-[11px]">✏️ Изменить</button>
-          <button id="deleteCardBtn" class="px-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-red-400 active:scale-95 text-[11px]">🗑️</button>
+  <!-- Карточка и процесс обучения -->
+  <main class="flex-1 flex flex-col justify-center items-center my-1">
+    <div id="cardWrapper" class="w-full flex flex-col justify-center">
+      
+      <!-- Прогресс-бар и панель управления текущим словом -->
+      <div class="space-y-1.5 mb-2.5 px-1">
+        <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+          <span id="cardCounter">Слово 1 из 10</span>
+          <div class="flex gap-2 items-center">
+            <button id="editCardBtn" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 active:scale-95 text-[11px] flex items-center gap-1 shadow-sm">
+              ✏️ Изменить
+            </button>
+            <button id="deleteCardBtn" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-red-400 active:scale-95 text-[11px] shadow-sm">
+              🗑️
+            </button>
+          </div>
+        </div>
+        <!-- Полоса прогресса в стиле Stories -->
+        <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800/80">
+          <div id="progressBar" class="bg-teal-400 h-full rounded-full transition-all duration-300" style="width: 10%;"></div>
         </div>
       </div>
 
+      <!-- Сама 3D-карточка -->
       <div id="cardBox" class="w-full h-80 perspective cursor-pointer">
         <div id="cardInner" class="relative w-full h-full duration-500 preserve-3d transition-transform">
           
           <!-- Сторона 1: Родной язык (Белая) -->
-          <div class="absolute inset-0 backface-hidden rounded-3xl bg-white text-slate-900 shadow-2xl p-6 flex flex-col justify-between border-4 border-slate-100">
-            <div class="flex justify-between items-center text-xs text-slate-400 font-bold uppercase">
+          <div class="absolute inset-0 backface-hidden rounded-3xl bg-white text-slate-900 shadow-xl p-6 flex flex-col justify-between border-4 border-slate-100">
+            <div class="flex justify-between items-center text-xs text-slate-400 font-bold tracking-wider uppercase">
               <span>Родной язык</span>
-              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Тап для перевода</span>
+              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-normal">Тап для перевода</span>
             </div>
             <div id="cardFrontText" class="text-center font-bold text-2xl px-2 break-words">Привет</div>
-            <div class="text-xs text-slate-400 text-center">↔ Свайп для следующего</div>
+            <div class="text-[11px] text-slate-400 text-center font-medium">↔ Свайп влево / вправо</div>
           </div>
 
           <!-- Сторона 2: Изучаемый язык (Фиолетовая) -->
-          <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-950 text-white shadow-2xl p-6 flex flex-col justify-between border-2 border-purple-400/30">
-            <div class="flex justify-between items-center text-xs text-purple-200 uppercase font-bold">
-              <button id="changeLangQuickBtn" class="flex items-center gap-1 bg-purple-900/60 border border-purple-400/40 px-2 py-1 rounded-lg active:scale-95">
+          <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-950 text-white shadow-xl p-6 flex flex-col justify-between border-2 border-purple-400/30">
+            <div class="flex justify-between items-center text-xs text-purple-200 uppercase font-bold tracking-wider">
+              <button id="changeLangQuickBtn" class="flex items-center gap-1 bg-purple-900/60 border border-purple-400/40 px-2.5 py-1 rounded-xl active:scale-95 shadow">
                 <span id="targetLangLabel">АНГЛИЙСКИЙ</span>
                 <span class="text-[10px] opacity-75">✏️</span>
               </button>
-              <button id="ttsBtn" class="p-1.5 bg-purple-600/40 border border-purple-400 rounded-lg text-sm active:scale-90">🔊</button>
+              <button id="ttsBtn" class="p-2 bg-purple-600/40 border border-purple-400 rounded-xl text-sm active:scale-90 shadow">🔊</button>
             </div>
             <div id="cardBackText" class="text-center font-bold text-2xl px-2 break-words">Hello</div>
-            <div class="text-xs text-purple-300 text-center">Тапните для проверки перевода</div>
+            <div class="text-[11px] text-purple-300 text-center font-medium">Тапните для проверки перевода</div>
           </div>
 
         </div>
       </div>
 
-      <!-- Кнопки управления -->
-      <div class="grid grid-cols-4 gap-2 mt-4 px-1">
-        <button id="prevBtn" class="py-2.5 bg-slate-900 rounded-2xl border border-slate-800 text-xs font-semibold text-slate-300 active:scale-95">◀ Назад</button>
-        <button id="flipBtn" class="py-2.5 bg-teal-500/10 border border-teal-500/30 text-teal-300 rounded-2xl text-xs font-bold active:scale-95">🔄 Переворот</button>
-        <button id="vertushkaBtn" class="py-2.5 bg-purple-600/20 border border-purple-500/40 text-purple-300 rounded-2xl text-xs font-bold active:scale-95 flex items-center justify-center gap-1 shadow">
-          <span>🌪️</span> Вертушка
+      <!-- Эргономичный нижний ряд: всего 3 крупные кнопки -->
+      <div class="grid grid-cols-5 gap-2 mt-4 px-1">
+        <button id="prevBtn" class="col-span-1 py-3 bg-slate-900 rounded-2xl border border-slate-800 text-slate-300 active:scale-95 font-bold flex items-center justify-center text-base shadow">
+          ◀
         </button>
-        <button id="nextBtn" class="py-2.5 bg-slate-900 rounded-2xl border border-slate-800 text-xs font-semibold text-slate-300 active:scale-95">Вперёд ▶</button>
+        <button id="vertushkaBtn" class="col-span-2 py-3 bg-purple-600/20 border border-purple-500/40 text-purple-200 rounded-2xl text-xs font-bold active:scale-95 flex items-center justify-center gap-1.5 shadow">
+          <span class="text-sm">🌪️</span> Вертушка
+        </button>
+        <button id="nextBtn" class="col-span-2 py-3 bg-slate-800/90 border border-slate-700 text-white rounded-2xl text-sm font-bold active:scale-95 flex items-center justify-center gap-1 shadow">
+          Вперёд ▶
+        </button>
       </div>
+
     </div>
 
-    <!-- Заглушка если карточек нет -->
+    <!-- Заглушка если слов в блоке нет -->
     <div id="emptyBlockNotice" class="hidden text-center p-8 bg-slate-900/60 rounded-3xl border border-dashed border-slate-800 max-w-xs">
       <div class="text-3xl mb-2">🎴</div>
       <h3 class="font-semibold text-slate-200 text-sm mb-1">В блоке нет слов</h3>
@@ -91,10 +113,12 @@
     </div>
   </main>
 
-  <!-- Нижняя кнопка добавления (Лимит 10) -->
-  <button id="addCardBtn" class="w-full bg-teal-500 text-slate-950 font-bold py-3 rounded-2xl text-sm shadow active:scale-95 mb-2">
-    + Добавить новую карточку
-  </button>
+  <!-- Нижняя панель с кнопкой добавления -->
+  <footer class="pt-1">
+    <button id="addCardBtn" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 rounded-2xl text-sm shadow active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+      <span>+</span> Добавить карточку <span id="deckCardCountBadge" class="text-xs font-semibold opacity-80">(0/10)</span>
+    </button>
+  </footer>
 
   <!-- Модалка: Смена языка текущего блока -->
   <div id="langModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
@@ -130,9 +154,9 @@
   <!-- Модалка: Переименование блока -->
   <div id="renameDeckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl w-full max-w-sm space-y-3.5">
-      <h3 class="font-bold text-white text-base">Переименовать блок</h3>
+      <h3 class="font-bold text-white text-base">Название блока</h3>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Новое название</label>
+        <label class="text-xs text-slate-400 block mb-1">Введите новое имя</label>
         <input id="renameDeckInput" type="text" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-500">
       </div>
       <div class="flex gap-2 pt-2">
@@ -142,7 +166,7 @@
     </div>
   </div>
 
-  <!-- Модалка: Создание колоды -->
+  <!-- Модалка: Создание новой колоды -->
   <div id="deckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl w-full max-w-sm space-y-3.5">
       <h3 class="font-bold text-white text-base">Создание нового блока</h3>
@@ -177,7 +201,7 @@
     </div>
   </div>
 
-  <!-- Модалка карточки -->
+  <!-- Модалка: Карточка (Добавить / Редактировать) -->
   <div id="cardModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl w-full max-w-sm space-y-3.5">
       <h3 id="cardModalTitle" class="font-bold text-white text-base">Новая карточка</h3>
@@ -196,18 +220,18 @@
     </div>
   </div>
 
-  <!-- Модалка PRO -->
+  <!-- Модалка: Оплата PRO -->
   <div id="proModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl w-full max-w-sm space-y-4">
       <div class="flex justify-between items-center">
-        <h3 class="font-bold text-white text-base">Подписка PRO</h3>
-        <button id="closeProModal" class="text-slate-400 font-bold">✕</button>
+        <h3 class="font-bold text-white text-base">Тариф PRO</h3>
+        <button id="closeProModal" class="text-slate-400 font-bold p-1">✕</button>
       </div>
-      <p class="text-xs text-slate-300">В бесплатной версии доступен 1 блок. С PRO-подпиской создавайте бесконечное количество блоков по 10 карточек под любые языки.</p>
+      <p class="text-xs text-slate-300 leading-relaxed">В бесплатной версии доступен 1 блок. С PRO-подпиской вы можете создавать неограниченное число блоков под любые языки.</p>
       <div class="bg-slate-950 p-4 rounded-2xl text-center border border-amber-500/20">
         <div class="text-xl font-bold text-amber-400 mb-1">150 ★ Stars / 1.5 TON</div>
-        <p class="text-[11px] text-slate-400 mb-3">Оплата через Telegram</p>
-        <button id="activateProBtn" class="w-full bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs">
+        <p class="text-[11px] text-slate-400 mb-3">Оплата внутри Telegram</p>
+        <button id="activateProBtn" class="w-full bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs active:scale-95 shadow">
           Активировать PRO
         </button>
       </div>
@@ -223,7 +247,7 @@
     }
 
     let isPro = localStorage.getItem("pv_pro") === "true";
-    let decks = JSON.parse(localStorage.getItem("pv_decks_v5") || "null");
+    let decks = JSON.parse(localStorage.getItem("pv_decks_v6") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
@@ -241,33 +265,57 @@
 
     let activeDeckId = decks[0].id;
     let cardIndex = 0;
-    // По умолчанию всегда открываем ИЗУЧАЕМЫЙ язык (фиолетовая сторона = rotate-y-180)
+    // На старте карточка всегда открывается изучаемой стороной (фиолетовой)
     let isFlipped = true;
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_v5", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_v6", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
     }
 
     function renderUI() {
-      document.getElementById("proBadge").textContent = isPro ? "★ PRO ДОСТУП" : "FREE ТАРИФ (1 блок)";
-      document.getElementById("buyProBtn").style.display = isPro ? "none" : "block";
+      // Компактный статус PRO в шапке
+      const buyBtn = document.getElementById("buyProBtn");
+      const activeBadge = document.getElementById("proActiveBadge");
+      if (isPro) {
+        buyBtn.classList.add("hidden");
+        activeBadge.classList.remove("hidden");
+        activeBadge.classList.add("flex");
+      } else {
+        buyBtn.classList.remove("hidden");
+        activeBadge.classList.add("hidden");
+        activeBadge.classList.remove("flex");
+      }
 
+      // Список блоков с иконкой быстрого переименования
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
       decks.forEach(d => {
         const btn = document.createElement("div");
         const isActive = d.id === activeDeckId;
-        btn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap cursor-pointer ${
+        btn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap cursor-pointer transition-colors ${
           isActive ? "bg-teal-500 text-slate-950 font-bold" : "bg-slate-900 border border-slate-800 text-slate-300"
         }`;
-        // Лимит отображения карточек 10
-        btn.innerHTML = `<span>${d.title}</span><span class="text-[10px] opacity-75">(${d.cards.length}/10)</span>`;
+        
+        btn.innerHTML = `
+          <span>${d.title}</span>
+          <span class="text-[10px] opacity-75">(${d.cards.length}/10)</span>
+          <span class="edit-title-btn ml-0.5 opacity-60 hover:opacity-100 text-[10px] p-0.5" title="Переименовать">✏️</span>
+        `;
+
+        // Клик по карандашу рядом с именем блока для быстрого переименования
+        btn.querySelector(".edit-title-btn").onclick = (e) => {
+          e.stopPropagation();
+          document.getElementById("renameDeckInput").value = d.title;
+          document.getElementById("renameDeckModal").classList.remove("hidden");
+        };
+
+        // Кнопка удаления блока (если их больше 1)
         if (decks.length > 1) {
           const del = document.createElement("span");
-          del.className = "ml-1 hover:text-red-500 font-bold";
+          del.className = "ml-1 text-red-500 hover:text-red-400 font-bold text-xs p-0.5";
           del.textContent = "✕";
           del.onclick = (e) => {
             e.stopPropagation();
@@ -282,6 +330,7 @@
           };
           btn.appendChild(del);
         }
+
         btn.onclick = () => {
           activeDeckId = d.id;
           cardIndex = 0;
@@ -291,8 +340,9 @@
         container.appendChild(btn);
       });
 
+      // Кнопка «+ Новый блок»
       const addDeckBtn = document.createElement("button");
-      addDeckBtn.className = "px-3 py-1.5 rounded-xl text-xs bg-teal-950/60 border border-dashed border-teal-600 text-teal-300 whitespace-nowrap";
+      addDeckBtn.className = "px-3 py-1.5 rounded-xl text-xs bg-teal-950/40 border border-dashed border-teal-600/70 text-teal-300 whitespace-nowrap active:scale-95";
       addDeckBtn.textContent = `+ Новый блок ${isPro ? "" : "(PRO)"}`;
       addDeckBtn.onclick = () => {
         if (!isPro && decks.length >= 1) {
@@ -311,7 +361,7 @@
       if (!activeDeck || activeDeck.cards.length === 0) {
         document.getElementById("cardWrapper").classList.add("hidden");
         document.getElementById("emptyBlockNotice").classList.remove("hidden");
-        document.getElementById("addCardBtn").textContent = "+ Добавить слово (0/10)";
+        document.getElementById("deckCardCountBadge").textContent = "(0/10)";
         return;
       }
 
@@ -321,11 +371,15 @@
       if (cardIndex >= activeDeck.cards.length) cardIndex = 0;
       const card = activeDeck.cards[cardIndex];
 
+      // Обновление счетчика и прогресс-бара
       document.getElementById("cardCounter").textContent = `Слово ${cardIndex + 1} из ${activeDeck.cards.length}`;
+      const progressPercent = ((cardIndex + 1) / activeDeck.cards.length) * 100;
+      document.getElementById("progressBar").style.width = `${progressPercent}%`;
+
       document.getElementById("cardFrontText").textContent = card.front;
       document.getElementById("cardBackText").textContent = card.back;
       document.getElementById("targetLangLabel").textContent = (activeDeck.targetLangName || "Иностранный").toUpperCase();
-      document.getElementById("addCardBtn").textContent = `+ Добавить новую карточку (${activeDeck.cards.length}/10)`;
+      document.getElementById("deckCardCountBadge").textContent = `(${activeDeck.cards.length}/10)`;
 
       const inner = document.getElementById("cardInner");
       if (isFlipped) inner.classList.add("rotate-y-180");
@@ -338,18 +392,13 @@
       isFlipped = !isFlipped;
       renderUI();
     };
-    document.getElementById("flipBtn").onclick = () => {
-      haptic("medium");
-      isFlipped = !isFlipped;
-      renderUI();
-    };
 
-    // Навигация: при переходе всегда возвращаем изучаемый язык (isFlipped = true)
+    // Навигация (возвращает изучаемый язык при переходе)
     document.getElementById("prevBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
       haptic("light");
-      isFlipped = true; // Сразу на изучаемом языке
+      isFlipped = true;
       cardIndex = (cardIndex - 1 + activeDeck.cards.length) % activeDeck.cards.length;
       renderUI();
     };
@@ -358,31 +407,29 @@
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
       haptic("light");
-      isFlipped = true; // Сразу на изучаемом языке
+      isFlipped = true;
       cardIndex = (cardIndex + 1) % activeDeck.cards.length;
       renderUI();
     };
 
-    // РЕЖИМ «ВЕРТУШКА»: перемешивает порядок карточек и рандомит сторону (родной / изучаемый)
+    // РЕЖИМ «ВЕРТУШКА»: Перемешивание карусели и рандомные стороны для тренировки
     document.getElementById("vertushkaBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
       haptic("heavy");
       
-      // Перемешивание карусели
       for (let i = activeDeck.cards.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [activeDeck.cards[i], activeDeck.cards[j]] = [activeDeck.cards[j], activeDeck.cards[i]];
       }
       
       cardIndex = 0;
-      // Рандомная сторона: 50% на 50% родной или иностранный для самопроверки
-      isFlipped = Math.random() < 0.5;
+      isFlipped = Math.random() < 0.5; // Рандомит лицевую или оборотную сторону
       saveState();
       renderUI();
     };
 
-    // Свайпы на телефоне
+    // Свайпы на мобильных устройствах
     let touchStartX = 0;
     const cardBox = document.getElementById("cardBox");
     cardBox.addEventListener("touchstart", (e) => {
@@ -410,7 +457,7 @@
       }
     };
 
-    // Быстрое редактирование языка блока
+    // Быстрая смена изучаемого языка
     document.getElementById("changeLangQuickBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
@@ -448,14 +495,7 @@
       document.getElementById("langModal").classList.add("hidden");
     };
 
-    // Переименование текущего блока
-    document.getElementById("renameDeckBtn").onclick = () => {
-      const activeDeck = decks.find(d => d.id === activeDeckId);
-      if (!activeDeck) return;
-      document.getElementById("renameDeckInput").value = activeDeck.title;
-      document.getElementById("renameDeckModal").classList.remove("hidden");
-    };
-
+    // Переименование блока
     document.getElementById("confirmRenameDeck").onclick = () => {
       const val = document.getElementById("renameDeckInput").value.trim();
       if (!val) return;
@@ -470,7 +510,7 @@
       document.getElementById("renameDeckModal").classList.add("hidden");
     };
 
-    // Добавление карточки (Лимит 10 карточек)
+    // Добавление карточки (Лимит 10)
     document.getElementById("addCardBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (activeDeck && activeDeck.cards.length >= 10) {
@@ -499,7 +539,7 @@
       document.getElementById("cardModal").classList.remove("hidden");
     };
 
-    // Удаление текущей карточки
+    // Удаление карточки
     document.getElementById("deleteCardBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
@@ -576,7 +616,7 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // PRO
+    // PRO подписка
     document.getElementById("buyProBtn").onclick = () => {
       document.getElementById("proModal").classList.remove("hidden");
     };
