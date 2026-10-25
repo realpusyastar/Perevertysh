@@ -18,7 +18,7 @@
 </head>
 <body class="bg-[#0B1120] text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans antialiased">
 
-  <!-- Шапка с оригинальным логотипом -->
+  <!-- Шапка -->
   <header class="flex justify-between items-center py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full overflow-hidden border border-blue-400/50 shadow-md shrink-0 flex items-center justify-center bg-[#2563EB]">
@@ -62,7 +62,7 @@
     </div>
   </header>
 
-  <!-- Список колодок -->
+  <!-- Список колод -->
   <div class="flex gap-2 overflow-x-auto py-2 no-scrollbar" id="decksContainer"></div>
 
   <!-- Карточка -->
@@ -91,24 +91,24 @@
       <div id="cardBox" class="w-full h-80 perspective cursor-pointer">
         <div id="cardInner" class="relative w-full h-full preserve-3d flip-fast">
           
-          <!-- Сторона 1: Родной язык (Солнечный мандарин) -->
+          <!-- Сторона 1: Родной язык -->
           <div class="absolute inset-0 backface-hidden rounded-3xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white shadow-[0_20px_50px_rgba(234,88,12,0.35)] p-6 flex flex-col justify-between border-2 border-orange-300/40">
             <div class="flex justify-between items-center text-xs text-orange-100 font-extrabold tracking-wider uppercase">
               <span class="bg-black/20 px-2.5 py-1 rounded-lg backdrop-blur-sm">РОДНОЙ ЯЗЫК</span>
-              <button onclick="event.stopPropagation(); triggerManualSpeech('front');" class="p-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm active:scale-90 transition-transform shadow">🔊</button>
+              <button id="manualSpeakFront" class="p-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm active:scale-90 transition-transform shadow">🔊</button>
             </div>
             <div id="cardFrontText" class="text-center font-black text-3xl px-2 break-words text-white tracking-tight drop-shadow-md">Привет</div>
             <div class="text-[11px] text-orange-100/90 text-center font-bold">↔ Свайп для следующего</div>
           </div>
 
-          <!-- Сторона 2: Изучаемый язык (Ультрамарин с золотистым текстом) -->
+          <!-- Сторона 2: Изучаемый язык -->
           <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white shadow-[0_20px_50px_rgba(37,99,235,0.4)] p-6 flex flex-col justify-between border-2 border-blue-300/40">
             <div class="flex justify-between items-center text-xs text-blue-100 uppercase font-extrabold tracking-wider">
               <button id="changeLangQuickBtn" class="flex items-center gap-1.5 bg-black/25 hover:bg-black/40 border border-white/20 px-3 py-1.5 rounded-xl active:scale-95 shadow backdrop-blur-sm transition-all">
                 <span id="targetLangLabel" class="text-white font-extrabold">АНГЛИЙСКИЙ</span>
                 <span class="text-[10px] opacity-80">✏️</span>
               </button>
-              <button onclick="event.stopPropagation(); triggerManualSpeech('back');" class="p-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm active:scale-90 shadow">🔊</button>
+              <button id="manualSpeakBack" class="p-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm active:scale-90 shadow">🔊</button>
             </div>
             <div id="cardBackText" class="text-center font-black text-3xl px-2 break-words text-[#FEF08A] tracking-tight drop-shadow-md">Hello</div>
             <div class="text-[11px] text-blue-100/90 text-center font-bold">Тапните для проверки перевода</div>
@@ -117,7 +117,7 @@
         </div>
       </div>
 
-      <!-- Навигация: 2 кнопки -->
+      <!-- Кнопки управления -->
       <div class="grid grid-cols-2 gap-3 mt-4 px-1">
         <button id="flipBtn" class="py-3.5 bg-[#16233B] border border-blue-400/40 hover:border-blue-300 text-blue-200 rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-2 shadow-md transition-all">
           <span>🔄</span> Разворот
@@ -136,37 +136,31 @@
     </div>
   </main>
 
-  <!-- Добавление карточки -->
+  <!-- Добавление слова -->
   <footer class="pt-1">
     <button id="addCardBtn" class="w-full bg-[#16233B] hover:bg-[#1C2C4B] border border-blue-900/60 text-slate-100 font-extrabold py-3 rounded-2xl text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5">
       <span class="text-amber-400 font-black text-base">+</span> Добавить карточку <span id="deckCardCountBadge" class="text-xs font-bold text-slate-400">(0/10)</span>
     </button>
   </footer>
 
-  <!-- Модалки -->
+  <!-- Модалка смены языка -->
   <div id="langModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
       <h3 class="font-bold text-white text-base">Изучаемый язык</h3>
       <div>
         <label class="text-xs text-slate-400 block mb-1">Выберите язык</label>
         <select id="quickLangSelect" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
-          <option value="en-US">Английский (US)</option>
-          <option value="en-GB">Английский (UK)</option>
-          <option value="de-DE">Немецкий</option>
-          <option value="fr-FR">Французский</option>
-          <option value="es-ES">Испанский</option>
-          <option value="it-IT">Итальянский</option>
-          <option value="tr-TR">Турецкий</option>
-          <option value="zh-CN">Китайский</option>
-          <option value="ja-JP">Японский</option>
-          <option value="ko-KR">Корейский</option>
-          <option value="ar-SA">Арабский</option>
-          <option value="other">Другой язык</option>
+          <option value="en">Английский</option>
+          <option value="de">Немецкий</option>
+          <option value="fr">Французский</option>
+          <option value="es">Испанский</option>
+          <option value="it">Итальянский</option>
+          <option value="tr">Турецкий</option>
+          <option value="zh">Китайский</option>
+          <option value="ja">Японский</option>
+          <option value="ko">Корейский</option>
+          <option value="ar">Арабский</option>
         </select>
-      </div>
-      <div id="quickCustomBox" class="hidden">
-        <label class="text-xs text-slate-400 block mb-1">Название языка</label>
-        <input id="quickCustomInput" type="text" placeholder="Например: Португальский" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
       </div>
       <div class="flex gap-2 pt-2">
         <button id="cancelLangModal" class="flex-1 py-2.5 bg-slate-800 rounded-xl text-xs font-semibold">Отмена</button>
@@ -175,55 +169,7 @@
     </div>
   </div>
 
-  <div id="renameDeckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-    <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
-      <h3 class="font-bold text-white text-base">Имя блока</h3>
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Новое название</label>
-        <input id="renameDeckInput" type="text" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-      </div>
-      <div class="flex gap-2 pt-2">
-        <button id="cancelRenameDeck" class="flex-1 py-2.5 bg-slate-800 rounded-xl text-xs font-semibold">Отмена</button>
-        <button id="confirmRenameDeck" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs">Сохранить</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="deckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-    <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
-      <h3 class="font-bold text-white text-base">Новый блок</h3>
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Название блока</label>
-        <input id="deckTitleInput" type="text" placeholder="Например: Семья и дом" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Язык</label>
-        <select id="deckLangSelect" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-          <option value="en-US">Английский (US)</option>
-          <option value="en-GB">Английский (UK)</option>
-          <option value="de-DE">Немецкий</option>
-          <option value="fr-FR">Французский</option>
-          <option value="es-ES">Испанский</option>
-          <option value="it-IT">Итальянский</option>
-          <option value="tr-TR">Турецкий</option>
-          <option value="zh-CN">Китайский</option>
-          <option value="ja-JP">Японский</option>
-          <option value="ko-KR">Корейский</option>
-          <option value="ar-SA">Арабский</option>
-          <option value="other">Другой язык</option>
-        </select>
-      </div>
-      <div id="customLangBox" class="hidden">
-        <label class="text-xs text-slate-400 block mb-1">Название языка</label>
-        <input id="customLangInput" type="text" placeholder="Например: Португальский" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-      </div>
-      <div class="flex gap-2 pt-2">
-        <button id="cancelDeckModal" class="flex-1 py-2.5 bg-slate-800 rounded-xl text-xs font-semibold">Отмена</button>
-        <button id="confirmSaveDeck" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs">Создать</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Модалка карточки -->
   <div id="cardModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
       <h3 id="cardModalTitle" class="font-bold text-white text-base">Карточка</h3>
@@ -242,6 +188,52 @@
     </div>
   </div>
 
+  <!-- Модалка имени блока -->
+  <div id="renameDeckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
+      <h3 class="font-bold text-white text-base">Имя блока</h3>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Новое название</label>
+        <input id="renameDeckInput" type="text" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="cancelRenameDeck" class="flex-1 py-2.5 bg-slate-800 rounded-xl text-xs font-semibold">Отмена</button>
+        <button id="confirmRenameDeck" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка создания блока -->
+  <div id="deckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
+      <h3 class="font-bold text-white text-base">Новый блок</h3>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Название блока</label>
+        <input id="deckTitleInput" type="text" placeholder="Например: В аэропорту" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Язык</label>
+        <select id="deckLangSelect" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          <option value="en">Английский</option>
+          <option value="de">Немецкий</option>
+          <option value="fr">Французский</option>
+          <option value="es">Испанский</option>
+          <option value="it">Итальянский</option>
+          <option value="tr">Турецкий</option>
+          <option value="zh">Китайский</option>
+          <option value="ja">Японский</option>
+          <option value="ko">Корейский</option>
+          <option value="ar">Арабский</option>
+        </select>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="cancelDeckModal" class="flex-1 py-2.5 bg-slate-800 rounded-xl text-xs font-semibold">Отмена</button>
+        <button id="confirmSaveDeck" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs">Создать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка PRO -->
   <div id="proModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-4 shadow-2xl">
       <div class="flex justify-between items-center">
@@ -270,14 +262,14 @@
     let isPro = localStorage.getItem("pv_pro") === "true";
     let isAutoSpeech = localStorage.getItem("pv_speech") !== "false";
 
-    let decks = JSON.parse(localStorage.getItem("pv_decks_v25") || "null");
+    let decks = JSON.parse(localStorage.getItem("pv_decks_tg_app") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
         id: "d1",
         title: "Базовый набор",
-        targetLangName: "Английский (US)",
-        targetLangCode: "en-US",
+        targetLangName: "Английский",
+        targetLangCode: "en",
         cards: [
           { id: "c1", front: "Привет", back: "Hello" },
           { id: "c2", front: "Спасибо", back: "Thank you" },
@@ -292,98 +284,50 @@
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_v25", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_tg_app", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
       localStorage.setItem("pv_speech", isAutoSpeech ? "true" : "false");
     }
 
-    // Системный пул голосов
-    let cachedVoices = [];
-    function loadVoices() {
-      if ("speechSynthesis" in window) {
-        cachedVoices = window.speechSynthesis.getVoices();
-      }
+    // --- ПРЯМОЙ И НАДЕЖНЫЙ АУДИОДВИЖОК ДЛЯ ПРИЛОЖЕНИЯ TELEGRAM ---
+    const mobileAudio = new Audio();
+    let hasInteracted = false;
+
+    // Снимаем блокировку аудио Telegram при первом же касании любого элемента
+    function unlockAudioOnce() {
+      if (hasInteracted) return;
+      hasInteracted = true;
+      mobileAudio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+      mobileAudio.play().catch(() => {});
     }
-    loadVoices();
-    if ("speechSynthesis" in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
+    window.addEventListener("touchstart", unlockAudioOnce, { passive: true });
+    window.addEventListener("click", unlockAudioOnce, { passive: true });
 
-    // Аппаратный аудиоплеер для Telegram WebView
-    const webAudio = new Audio();
-    let audioUnlocked = false;
-
-    function unlockTelegramAudio() {
-      if (audioUnlocked) return;
-      audioUnlocked = true;
-      webAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-      webAudio.play().catch(() => {});
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.resume();
-      }
-    }
-
-    window.addEventListener("touchstart", unlockTelegramAudio, { once: true });
-    window.addEventListener("click", unlockTelegramAudio, { once: true });
-
-    // Глобальная ссылка для предотвращения сброса сборщиком мусора
-    let activeUtterance = null;
-
+    // Воспроизведение через открытый шлюз Google Translate (client=gtx),
+    // который официально разрешен для мобильных приложений без CORS и ошибок 403
     function speakText(text, langCode) {
       if (!text) return;
-      unlockTelegramAudio();
+      unlockAudioOnce();
 
-      const fullLang = langCode || "en-US";
-      const shortLang = fullLang.split("-")[0].toLowerCase();
+      const lang = (langCode || "en").toLowerCase().slice(0, 2);
+      const cleanText = encodeURIComponent(text.trim());
 
-      // Метод 1: Нативный синтез с мягким тоном
-      if ("speechSynthesis" in window) {
-        try {
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.resume();
-
-          activeUtterance = new SpeechSynthesisUtterance(text);
-          activeUtterance.lang = fullLang;
-          activeUtterance.rate = 0.92;
-          activeUtterance.pitch = 0.95;
-
-          if (cachedVoices.length === 0) loadVoices();
-          const femVoice = cachedVoices.find(v => 
-            v.lang.toLowerCase().startsWith(shortLang) && 
-            /female|natural|samantha|zira|anna|elena|google/i.test(v.name)
-          );
-          if (femVoice) activeUtterance.voice = femVoice;
-
-          let didStart = false;
-          activeUtterance.onstart = () => { didStart = true; };
-          activeUtterance.onerror = () => { fallbackTTS(text, shortLang); };
-
-          window.speechSynthesis.speak(activeUtterance);
-
-          setTimeout(() => {
-            if (!didStart && !window.speechSynthesis.speaking) {
-              fallbackTTS(text, shortLang);
-            }
-          }, 120);
-          return;
-        } catch (e) {
-          fallbackTTS(text, shortLang);
-          return;
-        }
-      }
-
-      fallbackTTS(text, shortLang);
-    }
-
-    // Метод 2: Резервный скоростной поток без CORS-ошибок
-    function fallbackTTS(text, lang) {
       try {
-        webAudio.pause();
-        const encoded = encodeURIComponent(text.trim());
-        webAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
-        webAudio.playbackRate = 0.95;
-        webAudio.play().catch(() => {});
-      } catch (err) {}
+        mobileAudio.pause();
+        mobileAudio.currentTime = 0;
+        // Этот шлюз стабильно работает прямо внутри мобильного приложения Telegram
+        mobileAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=gtx&tl=${lang}&q=${cleanText}`;
+        mobileAudio.playbackRate = 0.95;
+        
+        const playPromise = mobileAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(e => {
+            console.log("Audio playback waiting for interaction");
+          });
+        }
+      } catch (err) {
+        console.error("Audio error:", err);
+      }
     }
 
     function autoSpeakCurrent() {
@@ -393,9 +337,9 @@
       if (!card) return;
 
       if (isFlipped) {
-        speakText(card.back, activeDeck.targetLangCode || "en-US");
+        speakText(card.back, activeDeck.targetLangCode || "en");
       } else {
-        speakText(card.front, "ru-RU");
+        speakText(card.front, "ru");
       }
     }
 
@@ -403,9 +347,19 @@
       const activeDeck = decks.find(d => d.id === activeDeckId);
       const card = activeDeck?.cards[cardIndex];
       if (!card) return;
-      if (side === "back") speakText(card.back, activeDeck.targetLangCode || "en-US");
-      else speakText(card.front, "ru-RU");
+      if (side === "back") speakText(card.back, activeDeck.targetLangCode || "en");
+      else speakText(card.front, "ru");
     }
+
+    document.getElementById("manualSpeakFront").onclick = (e) => {
+      e.stopPropagation();
+      triggerManualSpeech("front");
+    };
+
+    document.getElementById("manualSpeakBack").onclick = (e) => {
+      e.stopPropagation();
+      triggerManualSpeech("back");
+    };
 
     function updateSpeechButtonUI() {
       const icon = document.getElementById("speechIcon");
@@ -424,10 +378,7 @@
       updateSpeechButtonUI();
       saveState();
       if (isAutoSpeech) autoSpeakCurrent();
-      else {
-        webAudio.pause();
-        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-      }
+      else mobileAudio.pause();
     };
 
     function renderUI(triggerSpeech = false) {
@@ -503,8 +454,7 @@
           return;
         }
         document.getElementById("deckTitleInput").value = "";
-        document.getElementById("deckLangSelect").value = "en-US";
-        document.getElementById("customLangBox").classList.add("hidden");
+        document.getElementById("deckLangSelect").value = "en";
         document.getElementById("deckModal").classList.remove("hidden");
       };
       container.appendChild(addDeckBtn);
@@ -542,18 +492,21 @@
       }
     }
 
+    // Разворот карточки по тапу
     document.getElementById("cardBox").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
       renderUI(true);
     };
 
+    // Кнопка «Разворот»
     document.getElementById("flipBtn").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
       renderUI(true);
     };
 
+    // Кнопка «Вперёд ▶»
     document.getElementById("nextBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
@@ -563,6 +516,7 @@
       renderUI(true);
     };
 
+    // Свайпы
     let touchStartX = 0;
     const cardBox = document.getElementById("cardBox");
     cardBox.addEventListener("touchstart", (e) => {
@@ -585,34 +539,21 @@
       }
     }, { passive: true });
 
+    // Смена языка
     document.getElementById("changeLangQuickBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck) return;
-      document.getElementById("quickLangSelect").value = activeDeck.targetLangCode || "en-US";
-      document.getElementById("quickCustomBox").classList.add("hidden");
+      document.getElementById("quickLangSelect").value = activeDeck.targetLangCode || "en";
       document.getElementById("langModal").classList.remove("hidden");
-    };
-
-    document.getElementById("quickLangSelect").onchange = (e) => {
-      if (e.target.value === "other") document.getElementById("quickCustomBox").classList.remove("hidden");
-      else document.getElementById("quickCustomBox").classList.add("hidden");
     };
 
     document.getElementById("saveQuickLangBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck) return;
       const select = document.getElementById("quickLangSelect");
-      const langCode = select.value;
-      let langName = select.options[select.selectedIndex].text;
-
-      if (langCode === "other") {
-        const custom = document.getElementById("quickCustomInput").value.trim();
-        if (custom) langName = custom;
-      }
-
-      activeDeck.targetLangName = langName;
-      activeDeck.targetLangCode = langCode === "other" ? "en-US" : langCode;
+      activeDeck.targetLangCode = select.value;
+      activeDeck.targetLangName = select.options[select.selectedIndex].text;
       document.getElementById("langModal").classList.add("hidden");
       saveState();
       renderUI(true);
@@ -622,6 +563,7 @@
       document.getElementById("langModal").classList.add("hidden");
     };
 
+    // Переименование блока
     document.getElementById("confirmRenameDeck").onclick = () => {
       const val = document.getElementById("renameDeckInput").value.trim();
       if (!val) return;
@@ -636,6 +578,7 @@
       document.getElementById("renameDeckModal").classList.add("hidden");
     };
 
+    // Добавление карточки
     document.getElementById("addCardBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (activeDeck && activeDeck.cards.length >= 10) {
@@ -650,6 +593,7 @@
       document.getElementById("cardModal").classList.remove("hidden");
     };
 
+    // Редактирование карточки
     document.getElementById("editCardBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
@@ -663,6 +607,7 @@
       document.getElementById("cardModal").classList.remove("hidden");
     };
 
+    // Удаление карточки
     document.getElementById("deleteCardBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
@@ -676,6 +621,7 @@
       }
     };
 
+    // Сохранение карточки
     document.getElementById("confirmSaveCard").onclick = () => {
       const front = document.getElementById("cardFrontInput").value.trim();
       const back = document.getElementById("cardBackInput").value.trim();
@@ -699,28 +645,17 @@
       document.getElementById("cardModal").classList.add("hidden");
     };
 
-    document.getElementById("deckLangSelect").onchange = (e) => {
-      if (e.target.value === "other") document.getElementById("customLangBox").classList.remove("hidden");
-      else document.getElementById("customLangBox").classList.add("hidden");
-    };
-
+    // Создание колоды
     document.getElementById("confirmSaveDeck").onclick = () => {
       const title = document.getElementById("deckTitleInput").value.trim();
       if (!title) return;
       const select = document.getElementById("deckLangSelect");
-      const langCode = select.value;
-      let langName = select.options[select.selectedIndex].text;
-
-      if (langCode === "other") {
-        const custom = document.getElementById("customLangInput").value.trim();
-        if (custom) langName = custom;
-      }
 
       const newDeck = {
         id: "d_" + Date.now(),
         title,
-        targetLangName: langName,
-        targetLangCode: langCode === "other" ? "en-US" : langCode,
+        targetLangName: select.options[select.selectedIndex].text,
+        targetLangCode: select.value,
         cards: []
       };
 
@@ -737,6 +672,7 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
+    // PRO
     document.getElementById("buyProBtn").onclick = () => {
       document.getElementById("proModal").classList.remove("hidden");
     };
