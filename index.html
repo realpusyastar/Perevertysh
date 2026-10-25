@@ -18,14 +18,14 @@
 </head>
 <body class="bg-[#0B1120] text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans antialiased">
 
-  <!-- Status / Loading Screen sakbay a makompirma ti suskripsion -->
+  <!-- Экран проверки доступа -->
   <div id="authGate" class="fixed inset-0 bg-[#0B1120] z-[100] flex flex-col items-center justify-center p-6 text-center">
     <div id="gateLoader" class="flex flex-col items-center gap-3">
       <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-semibold text-slate-300">Проверка доступа к закрытому клубу...</p>
+      <p class="text-sm font-semibold text-slate-300">Проверка доступа к клубу...</p>
     </div>
 
-    <div id="gateDenied" class="hidden flex-col items-center gap-4 max-w-xs">
+    <div id="gateDenied" class="hidden flex flex-col items-center gap-4 max-w-xs">
       <div class="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-3xl">
         🔒
       </div>
@@ -241,7 +241,7 @@
   <script>
     const CONFIG = {
       BOT_TOKEN: "8645559012:AAEP2YvO483QGzouly4PxKXhmWJpjHhhxbA",
-      CHANNEL_ID: "ISUKAT_DITOY_TI_ID_TI_CHANNEL" // e.g. -1001234567890
+      CHANNEL_ID: "-1004486592937"
     };
 
     const tg = window.Telegram?.WebApp;
@@ -276,7 +276,7 @@
           gateDenied.classList.remove("hidden");
         }
       } catch (err) {
-        console.error("Panangsukimat napaay:", err);
+        console.error("Ошибка проверки:", err);
         gateLoader.classList.add("hidden");
         gateDenied.classList.remove("hidden");
       }
@@ -582,7 +582,7 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // Ipataray ti panangsukimat
+    // Запуск проверки подписки
     verifyMembership();
   </script>
 </body>
