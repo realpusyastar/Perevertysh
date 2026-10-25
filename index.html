@@ -261,7 +261,10 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
+    if (tg) { 
+      tg.ready(); 
+      tg.expand(); 
+    }
 
     function haptic(type = "light") {
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(type);
@@ -293,7 +296,6 @@
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
     }
 
-    // Алгоритм Фишера — Йетса для случайного неповторяющегося порядка
     function shuffleArray(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -607,22 +609,29 @@
       document.getElementById("proModal").classList.add("hidden");
     };
 
-    // Отправка запроса на оплату Звёздами (150 Stars)
-    document.getElementById("payWithStarsBtn").onclick = () => {
-      if (window.Telegram?.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({ action: "buy_pro_stars" }));
+    // Универсальная отправка запроса на оплату боту
+    function requestPayment(actionName) {
+      haptic("medium");
+      if (window.Telegram?.WebApp && typeof Telegram.WebApp.sendData === "function") {
+        try {
+          Telegram.WebApp.sendData(JSON.stringify({ action: actionName }));
+          Telegram.WebApp.close();
+        } catch (err) {
+          alert("Для выставления счёта запустите приложение через команду /start внутри чата с ботом.");
+        }
       } else {
         alert("Оплата доступна внутри мобильного Telegram");
       }
+    }
+
+    // Отправка запроса на оплату Звёздами (150 Stars)
+    document.getElementById("payWithStarsBtn").onclick = () => {
+      requestPayment("buy_pro_stars");
     };
 
     // Отправка запроса на оплату криптовалютой (1.5 TON)
     document.getElementById("payWithCryptoBtn").onclick = () => {
-      if (window.Telegram?.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({ action: "buy_pro_crypto" }));
-      } else {
-        alert("Оплата доступна внутри мобильного Telegram");
-      }
+      requestPayment("buy_pro_crypto");
     };
 
     renderUI();
