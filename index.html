@@ -18,8 +18,8 @@
 </head>
 <body class="bg-[#0B1120] text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans antialiased">
 
-  <!-- Шапка -->
-  <header class="flex justify-between items-center py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
+  <!-- Шапка: только лого и название -->
+  <header class="flex items-center justify-between py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full overflow-hidden border border-blue-400/50 shadow-md shrink-0 flex items-center justify-center bg-[#2563EB]">
         <svg viewBox="0 0 100 100" class="w-full h-full">
@@ -43,15 +43,6 @@
         </svg>
       </div>
       <h1 class="font-extrabold text-white text-sm tracking-wide">Перевёртыш</h1>
-    </div>
-    
-    <div id="headerStatusArea">
-      <button id="openAccessModalBtn" class="bg-[#1A2640] hover:bg-[#233355] border border-blue-500/40 text-blue-200 text-xs font-bold px-3 py-1.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1.5">
-        <span>🔑</span> Ввести код
-      </button>
-      <div id="accessActiveBadge" class="hidden items-center gap-1 bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
-        <span>✓</span> Полный доступ
-      </div>
     </div>
   </header>
 
@@ -132,33 +123,12 @@
     </div>
   </main>
 
-  <!-- Добавление карточки -->
+  <!-- Добавление карточки: без лимитов -->
   <footer class="pt-1">
     <button id="addCardBtn" class="w-full bg-[#16233B] hover:bg-[#1C2C4B] border border-blue-900/60 text-slate-100 font-extrabold py-3 rounded-2xl text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5">
-      <span class="text-amber-400 font-black text-base">+</span> Добавить карточку <span id="deckCardCountBadge" class="text-xs font-bold text-slate-400">(0/15)</span>
+      <span class="text-amber-400 font-black text-base">+</span> Добавить карточку <span id="deckCardCountBadge" class="text-xs font-bold text-slate-400">(0)</span>
     </button>
   </footer>
-
-  <!-- Окно ввода кода доступа -->
-  <div id="accessModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-    <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-4 shadow-2xl">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-white text-base">Код доступа</h3>
-        <button id="closeAccessModal" class="text-slate-400 font-bold p-1">✕</button>
-      </div>
-      
-      <p class="text-xs text-slate-300 leading-relaxed">
-        Введите персональный код доступа из нашего закрытого Telegram-канала, чтобы разблокировать неограниченное число блоков и карточек.
-      </p>
-
-      <div class="space-y-2">
-        <input id="accessKeyInput" type="text" placeholder="Введите код" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white uppercase text-center tracking-widest focus:outline-none focus:border-blue-500">
-        <button id="activateAccessKeyBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs active:scale-95 transition-all shadow-md">
-          Активировать
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- Модалка смены языка -->
   <div id="langModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
@@ -186,7 +156,7 @@
     </div>
   </div>
 
-  <!-- Модалка карточки -->
+  <!-- Модалка создания карточки -->
   <div id="cardModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
       <h3 id="cardModalTitle" class="font-bold text-white text-base">Карточка</h3>
@@ -205,7 +175,7 @@
     </div>
   </div>
 
-  <!-- Модалка имени блока -->
+  <!-- Модалка переименования блока -->
   <div id="renameDeckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
       <h3 class="font-bold text-white text-base">Имя блока</h3>
@@ -251,9 +221,6 @@
   </div>
 
   <script>
-    // Секретный код, который вы закрепите в закрытом канале Tribute
-    const SECRET_ACCESS_KEY = "PRO2026";
-
     const tg = window.Telegram?.WebApp;
     if (tg) { 
       tg.ready(); 
@@ -264,7 +231,6 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(type);
     }
 
-    let hasFullAccess = localStorage.getItem("pv_full_access") === "true";
     let decks = JSON.parse(localStorage.getItem("pv_decks_pure") || "null");
 
     if (!decks || decks.length === 0) {
@@ -287,7 +253,6 @@
 
     function saveState() {
       localStorage.setItem("pv_decks_pure", JSON.stringify(decks));
-      localStorage.setItem("pv_full_access", hasFullAccess ? "true" : "false");
     }
 
     function shuffleArray(array) {
@@ -300,32 +265,19 @@
     }
 
     function renderUI() {
-      const openBtn = document.getElementById("openAccessModalBtn");
-      const activeBadge = document.getElementById("accessActiveBadge");
-      if (hasFullAccess) {
-        openBtn.classList.add("hidden");
-        activeBadge.classList.remove("hidden");
-        activeBadge.classList.add("flex");
-      } else {
-        openBtn.classList.remove("hidden");
-        activeBadge.classList.add("hidden");
-        activeBadge.classList.remove("flex");
-      }
-
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
       decks.forEach(d => {
         const btn = document.createElement("div");
         const isActive = d.id === activeDeckId;
-        const countText = hasFullAccess ? `${d.cards.length}` : `${d.cards.length}/15`;
         btn.className = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap cursor-pointer transition-all ${
           isActive ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold shadow-md shadow-blue-950" : "bg-[#131E36] border border-blue-900/50 text-slate-300 font-medium"
         }`;
         
         btn.innerHTML = `
           <span>${d.title}</span>
-          <span class="text-[10px] opacity-75">(${countText})</span>
+          <span class="text-[10px] opacity-75">(${d.cards.length})</span>
           <span class="edit-title-btn ml-0.5 opacity-60 hover:opacity-100 text-[10px] p-0.5">✏️</span>
         `;
 
@@ -362,16 +314,11 @@
         container.appendChild(btn);
       });
 
-      // Кнопка нового блока
+      // Свободное создание блоков без ограничений
       const addDeckBtn = document.createElement("button");
       addDeckBtn.className = "px-3 py-1.5 rounded-xl text-xs bg-[#131E36] border border-dashed border-blue-500/40 text-blue-300 font-bold whitespace-nowrap active:scale-95";
-      addDeckBtn.textContent = hasFullAccess ? "+ Новый блок" : "🔒 Новый блок";
+      addDeckBtn.textContent = "+ Новый блок";
       addDeckBtn.onclick = () => {
-        if (!hasFullAccess && decks.length >= 1) {
-          haptic("medium");
-          document.getElementById("accessModal").classList.remove("hidden");
-          return;
-        }
         document.getElementById("deckTitleInput").value = "";
         document.getElementById("deckLangSelect").value = "Английский";
         document.getElementById("deckModal").classList.remove("hidden");
@@ -383,7 +330,7 @@
       if (!activeDeck || activeDeck.cards.length === 0) {
         document.getElementById("cardWrapper").classList.add("hidden");
         document.getElementById("emptyBlockNotice").classList.remove("hidden");
-        document.getElementById("deckCardCountBadge").textContent = hasFullAccess ? "(0)" : "(0/15)";
+        document.getElementById("deckCardCountBadge").textContent = "(0)";
         return;
       }
 
@@ -400,27 +347,28 @@
       document.getElementById("cardFrontText").textContent = card.front;
       document.getElementById("cardBackText").textContent = card.back;
       document.getElementById("targetLangLabel").textContent = (activeDeck.targetLangName || "Иностранный").toUpperCase();
-      document.getElementById("deckCardCountBadge").textContent = hasFullAccess ? `(${activeDeck.cards.length})` : `(${activeDeck.cards.length}/15)`;
+      document.getElementById("deckCardCountBadge").textContent = `(${activeDeck.cards.length})`;
 
       const inner = document.getElementById("cardInner");
       if (isFlipped) inner.classList.add("rotate-y-180");
       else inner.classList.remove("rotate-y-180");
     }
 
-    // Разворот карточки
+    // Разворот карточки по тапу
     document.getElementById("cardBox").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
       renderUI();
     };
 
+    // Кнопка «Разворот»
     document.getElementById("flipBtn").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
       renderUI();
     };
 
-    // Перемешать
+    // Кнопка «Перемешать» 🔀
     document.getElementById("shuffleBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
@@ -432,7 +380,7 @@
       renderUI();
     };
 
-    // Вперёд
+    // Кнопка «Вперёд ▶»
     document.getElementById("nextBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
@@ -503,14 +451,9 @@
       document.getElementById("renameDeckModal").classList.add("hidden");
     };
 
-    // Добавление карточки (лимит 15 в базовом режиме)
+    // Добавление карточки: без ограничений
     document.getElementById("addCardBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
-      if (!hasFullAccess && activeDeck && activeDeck.cards.length >= 15) {
-        haptic("medium");
-        document.getElementById("accessModal").classList.remove("hidden");
-        return;
-      }
       editingCardId = null;
       document.getElementById("cardModalTitle").textContent = "Новая карточка";
       document.getElementById("cardFrontInput").value = "";
@@ -571,7 +514,7 @@
       document.getElementById("cardModal").classList.add("hidden");
     };
 
-    // Создание блока
+    // Создание нового блока
     document.getElementById("confirmSaveDeck").onclick = () => {
       const title = document.getElementById("deckTitleInput").value.trim();
       if (!title) return;
@@ -595,30 +538,6 @@
 
     document.getElementById("cancelDeckModal").onclick = () => {
       document.getElementById("deckModal").classList.add("hidden");
-    };
-
-    // Модалка ввода кода
-    document.getElementById("openAccessModalBtn").onclick = () => {
-      document.getElementById("accessModal").classList.remove("hidden");
-    };
-    document.getElementById("closeAccessModal").onclick = () => {
-      document.getElementById("accessModal").classList.add("hidden");
-    };
-
-    // Проверка кода
-    document.getElementById("activateAccessKeyBtn").onclick = () => {
-      const input = document.getElementById("accessKeyInput").value.trim().toUpperCase();
-      if (input === SECRET_ACCESS_KEY) {
-        hasFullAccess = true;
-        saveState();
-        document.getElementById("accessModal").classList.add("hidden");
-        haptic("heavy");
-        alert("🎉 Полный доступ успешно активирован!");
-        renderUI();
-      } else {
-        haptic("error");
-        alert("Неверный код доступа. Проверьте сообщение в закрытом канале.");
-      }
     };
 
     renderUI();
