@@ -13,6 +13,11 @@
     .rotate-y-180 { transform: rotateY(180deg); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Ультрабыстрый и плавный разворот (200мс) */
+    .flip-fast {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans">
@@ -23,13 +28,21 @@
       <span class="text-base">🎴</span>
       <h1 class="font-bold text-white text-sm tracking-wide">Перевёртыш</h1>
     </div>
-    <div id="headerStatusArea">
-      <!-- Динамически меняется на «PRO активен» -->
-      <button id="buyProBtn" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3 py-1 rounded-xl shadow active:scale-95 transition-transform">
-        Купить PRO
+    
+    <div class="flex items-center gap-2">
+      <!-- Переключатель автоозвучки -->
+      <button id="toggleAutoSpeechBtn" class="flex items-center gap-1 bg-slate-800 border border-slate-700 text-teal-300 text-[11px] font-semibold px-2 py-1 rounded-xl active:scale-95">
+        <span id="speechIcon">🔊</span>
+        <span id="speechText">Авто: ВКЛ</span>
       </button>
-      <div id="proActiveBadge" class="hidden items-center gap-1 bg-teal-500/10 border border-teal-500/30 text-teal-300 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-        <span>★</span> PRO активен
+
+      <div id="headerStatusArea">
+        <button id="buyProBtn" class="bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold px-3 py-1 rounded-xl shadow active:scale-95 transition-transform">
+          Купить PRO
+        </button>
+        <div id="proActiveBadge" class="hidden items-center gap-1 bg-teal-500/10 border border-teal-500/30 text-teal-300 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+          <span>★</span> PRO активен
+        </div>
       </div>
     </div>
   </header>
@@ -62,16 +75,16 @@
 
       <!-- Сама 3D-карточка -->
       <div id="cardBox" class="w-full h-80 perspective cursor-pointer">
-        <div id="cardInner" class="relative w-full h-full duration-500 preserve-3d transition-transform">
+        <div id="cardInner" class="relative w-full h-full preserve-3d flip-fast">
           
           <!-- Сторона 1: Родной язык (Белая) -->
           <div class="absolute inset-0 backface-hidden rounded-3xl bg-white text-slate-900 shadow-xl p-6 flex flex-col justify-between border-4 border-slate-100">
             <div class="flex justify-between items-center text-xs text-slate-400 font-bold tracking-wider uppercase">
               <span>Родной язык</span>
-              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-normal">Тап для перевода</span>
+              <button onclick="event.stopPropagation(); triggerManualSpeech('front');" class="p-1.5 bg-slate-100 border border-slate-200 rounded-lg text-xs active:scale-90">🔊</button>
             </div>
             <div id="cardFrontText" class="text-center font-bold text-2xl px-2 break-words">Привет</div>
-            <div class="text-[11px] text-slate-400 text-center font-medium">↔ Свайп влево / вправо</div>
+            <div class="text-[11px] text-slate-400 text-center font-medium">↔ Свайп для следующего</div>
           </div>
 
           <!-- Сторона 2: Изучаемый язык (Фиолетовая) -->
@@ -81,7 +94,7 @@
                 <span id="targetLangLabel">АНГЛИЙСКИЙ</span>
                 <span class="text-[10px] opacity-75">✏️</span>
               </button>
-              <button id="ttsBtn" class="p-2 bg-purple-600/40 border border-purple-400 rounded-xl text-sm active:scale-90 shadow">🔊</button>
+              <button onclick="event.stopPropagation(); triggerManualSpeech('back');" class="p-2 bg-purple-600/40 border border-purple-400 rounded-xl text-sm active:scale-90 shadow">🔊</button>
             </div>
             <div id="cardBackText" class="text-center font-bold text-2xl px-2 break-words">Hello</div>
             <div class="text-[11px] text-purple-300 text-center font-medium">Тапните для проверки перевода</div>
@@ -90,7 +103,7 @@
         </div>
       </div>
 
-      <!-- Эргономичный нижний ряд: всего 3 крупные кнопки -->
+      <!-- Эргономичный нижний ряд: 3 крупные кнопки -->
       <div class="grid grid-cols-5 gap-2 mt-4 px-1">
         <button id="prevBtn" class="col-span-1 py-3 bg-slate-900 rounded-2xl border border-slate-800 text-slate-300 active:scale-95 font-bold flex items-center justify-center text-base shadow">
           ◀
@@ -247,7 +260,10 @@
     }
 
     let isPro = localStorage.getItem("pv_pro") === "true";
-    let decks = JSON.parse(localStorage.getItem("pv_decks_v6") || "null");
+    let isAutoSpeech = localStorage.getItem("pv_speech") !== "false"; // По умолчанию включено
+    let isSpinning = false; // Флаг для вертушки
+
+    let decks = JSON.parse(localStorage.getItem("pv_decks_v7") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
@@ -265,17 +281,106 @@
 
     let activeDeckId = decks[0].id;
     let cardIndex = 0;
-    // На старте карточка всегда открывается изучаемой стороной (фиолетовой)
-    let isFlipped = true;
+    let isFlipped = true; // Сразу на иностранном языке
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_v6", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_v7", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
+      localStorage.setItem("pv_speech", isAutoSpeech ? "true" : "false");
     }
 
-    function renderUI() {
-      // Компактный статус PRO в шапке
+    // Инициализация голосов
+    let cachedVoices = [];
+    function loadVoices() {
+      if ("speechSynthesis" in window) {
+        cachedVoices = window.speechSynthesis.getVoices();
+      }
+    }
+    loadVoices();
+    if ("speechSynthesis" in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // Умный подбор спокойного феминного голоса
+    function getFeminineVoice(langCode) {
+      if (!cachedVoices || cachedVoices.length === 0) loadVoices();
+      const prefix = langCode.split("-")[0].toLowerCase();
+      const langVoices = cachedVoices.filter(v => v.lang.toLowerCase().startsWith(prefix));
+      
+      // Ищем спокойные/женские голоса по системным маркерам
+      const femininePatterns = [/female/i, /natural/i, /neural/i, /samantha/i, /victoria/i, /zira/i, /anna/i, /elena/i, /yuri/i, /google/i];
+      for (const pattern of femininePatterns) {
+        const found = langVoices.find(v => pattern.test(v.name));
+        if (found) return found;
+      }
+      return langVoices[0] || null;
+    }
+
+    // Воспроизведение звука
+    function speakText(text, langCode) {
+      if (!("speechSynthesis" in window) || !text) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = langCode || "en-US";
+      
+      const femVoice = getFeminineVoice(utterance.lang);
+      if (femVoice) utterance.voice = femVoice;
+
+      // Мягкий спокойный тон и темп
+      utterance.pitch = 0.95;
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Автоозвучка текущей видимой стороны
+    function autoSpeakCurrent() {
+      if (!isAutoSpeech || isSpinning) return;
+      const activeDeck = decks.find(d => d.id === activeDeckId);
+      const card = activeDeck?.cards[cardIndex];
+      if (!card) return;
+
+      if (isFlipped) {
+        // Оборот (Изучаемый язык)
+        speakText(card.back, activeDeck.targetLangCode || "en-US");
+      } else {
+        // Лицевая сторона (Родной русский язык)
+        speakText(card.front, "ru-RU");
+      }
+    }
+
+    function triggerManualSpeech(side) {
+      const activeDeck = decks.find(d => d.id === activeDeckId);
+      const card = activeDeck?.cards[cardIndex];
+      if (!card) return;
+      if (side === "back") speakText(card.back, activeDeck.targetLangCode || "en-US");
+      else speakText(card.front, "ru-RU");
+    }
+
+    function updateSpeechButtonUI() {
+      const icon = document.getElementById("speechIcon");
+      const text = document.getElementById("speechText");
+      if (isAutoSpeech) {
+        icon.textContent = "🔊";
+        text.textContent = "Авто: ВКЛ";
+      } else {
+        icon.textContent = "🔇";
+        text.textContent = "Авто: ВЫКЛ";
+      }
+    }
+
+    document.getElementById("toggleAutoSpeechBtn").onclick = () => {
+      isAutoSpeech = !isAutoSpeech;
+      updateSpeechButtonUI();
+      saveState();
+      if (isAutoSpeech) autoSpeakCurrent();
+      else if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    };
+
+    function renderUI(triggerSpeech = false) {
+      updateSpeechButtonUI();
+
+      // PRO в шапке
       const buyBtn = document.getElementById("buyProBtn");
       const activeBadge = document.getElementById("proActiveBadge");
       if (isPro) {
@@ -288,7 +393,7 @@
         activeBadge.classList.remove("flex");
       }
 
-      // Список блоков с иконкой быстрого переименования
+      // Список блоков
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
@@ -302,17 +407,15 @@
         btn.innerHTML = `
           <span>${d.title}</span>
           <span class="text-[10px] opacity-75">(${d.cards.length}/10)</span>
-          <span class="edit-title-btn ml-0.5 opacity-60 hover:opacity-100 text-[10px] p-0.5" title="Переименовать">✏️</span>
+          <span class="edit-title-btn ml-0.5 opacity-60 hover:opacity-100 text-[10px] p-0.5">✏️</span>
         `;
 
-        // Клик по карандашу рядом с именем блока для быстрого переименования
         btn.querySelector(".edit-title-btn").onclick = (e) => {
           e.stopPropagation();
           document.getElementById("renameDeckInput").value = d.title;
           document.getElementById("renameDeckModal").classList.remove("hidden");
         };
 
-        // Кнопка удаления блока (если их больше 1)
         if (decks.length > 1) {
           const del = document.createElement("span");
           del.className = "ml-1 text-red-500 hover:text-red-400 font-bold text-xs p-0.5";
@@ -325,22 +428,22 @@
               cardIndex = 0;
               isFlipped = true;
               saveState();
-              renderUI();
+              renderUI(true);
             }
           };
           btn.appendChild(del);
         }
 
         btn.onclick = () => {
+          if (isSpinning) return;
           activeDeckId = d.id;
           cardIndex = 0;
           isFlipped = true;
-          renderUI();
+          renderUI(true);
         };
         container.appendChild(btn);
       });
 
-      // Кнопка «+ Новый блок»
       const addDeckBtn = document.createElement("button");
       addDeckBtn.className = "px-3 py-1.5 rounded-xl text-xs bg-teal-950/40 border border-dashed border-teal-600/70 text-teal-300 whitespace-nowrap active:scale-95";
       addDeckBtn.textContent = `+ Новый блок ${isPro ? "" : "(PRO)"}`;
@@ -371,7 +474,6 @@
       if (cardIndex >= activeDeck.cards.length) cardIndex = 0;
       const card = activeDeck.cards[cardIndex];
 
-      // Обновление счетчика и прогресс-бара
       document.getElementById("cardCounter").textContent = `Слово ${cardIndex + 1} из ${activeDeck.cards.length}`;
       const progressPercent = ((cardIndex + 1) / activeDeck.cards.length) * 100;
       document.getElementById("progressBar").style.width = `${progressPercent}%`;
@@ -384,49 +486,74 @@
       const inner = document.getElementById("cardInner");
       if (isFlipped) inner.classList.add("rotate-y-180");
       else inner.classList.remove("rotate-y-180");
+
+      if (triggerSpeech) {
+        autoSpeakCurrent();
+      }
     }
 
-    // Переворот карточки по тапу
+    // Переворот карточки по тапу (с автоозвучкой)
     document.getElementById("cardBox").onclick = () => {
+      if (isSpinning) return;
       haptic("medium");
       isFlipped = !isFlipped;
-      renderUI();
+      renderUI(true);
     };
 
-    // Навигация (возвращает изучаемый язык при переходе)
+    // Навигация
     document.getElementById("prevBtn").onclick = () => {
+      if (isSpinning) return;
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
       haptic("light");
       isFlipped = true;
       cardIndex = (cardIndex - 1 + activeDeck.cards.length) % activeDeck.cards.length;
-      renderUI();
+      renderUI(true);
     };
 
     document.getElementById("nextBtn").onclick = () => {
+      if (isSpinning) return;
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
       haptic("light");
       isFlipped = true;
       cardIndex = (cardIndex + 1) % activeDeck.cards.length;
-      renderUI();
+      renderUI(true);
     };
 
-    // РЕЖИМ «ВЕРТУШКА»: Перемешивание карусели и рандомные стороны для тренировки
+    // РЕЖИМ «ВЕРТУШКА» (Карусель-рулетка с анимацией тасования всех 10 карточек)
     document.getElementById("vertushkaBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
-      if (!activeDeck || activeDeck.cards.length <= 1) return;
+      if (!activeDeck || activeDeck.cards.length <= 1 || isSpinning) return;
+      
+      isSpinning = true;
       haptic("heavy");
-      
-      for (let i = activeDeck.cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [activeDeck.cards[i], activeDeck.cards[j]] = [activeDeck.cards[j], activeDeck.cards[i]];
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+      let spins = 0;
+      const totalSpins = 12 + Math.floor(Math.random() * 6); // 12-18 динамических переворотов
+      let speed = 90; // Старт с быстрой смены каждые 90мс
+
+      function runRoulette() {
+        spins++;
+        cardIndex = Math.floor(Math.random() * activeDeck.cards.length);
+        isFlipped = Math.random() < 0.5; // Сами открываются и закрываются
+        haptic("light");
+        renderUI(false);
+
+        if (spins < totalSpins) {
+          speed += 20; // Плавное замедление к концу
+          setTimeout(runRoulette, speed);
+        } else {
+          // Финальная остановка
+          isSpinning = false;
+          haptic("medium");
+          saveState();
+          renderUI(true); // Озвучиваем выпавшее слово спокойным голосом
+        }
       }
-      
-      cardIndex = 0;
-      isFlipped = Math.random() < 0.5; // Рандомит лицевую или оборотную сторону
-      saveState();
-      renderUI();
+
+      runRoulette();
     };
 
     // Свайпы на мобильных устройствах
@@ -437,6 +564,7 @@
     }, { passive: true });
 
     cardBox.addEventListener("touchend", (e) => {
+      if (isSpinning) return;
       const diff = touchStartX - e.changedTouches[0].clientX;
       if (Math.abs(diff) > 40) {
         if (diff > 0) document.getElementById("nextBtn").click();
@@ -444,20 +572,7 @@
       }
     }, { passive: true });
 
-    // Озвучка
-    document.getElementById("ttsBtn").onclick = (e) => {
-      e.stopPropagation();
-      const activeDeck = decks.find(d => d.id === activeDeckId);
-      const card = activeDeck?.cards[cardIndex];
-      if (card && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(card.back);
-        u.lang = activeDeck.targetLangCode || "en-US";
-        window.speechSynthesis.speak(u);
-      }
-    };
-
-    // Быстрая смена изучаемого языка
+    // Смена изучаемого языка
     document.getElementById("changeLangQuickBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
@@ -488,7 +603,7 @@
       activeDeck.targetLangCode = langCode === "other" ? "en-US" : langCode;
       document.getElementById("langModal").classList.add("hidden");
       saveState();
-      renderUI();
+      renderUI(true);
     };
 
     document.getElementById("cancelLangModal").onclick = () => {
@@ -549,7 +664,7 @@
         cardIndex = 0;
         isFlipped = true;
         saveState();
-        renderUI();
+        renderUI(true);
       }
     };
 
@@ -570,7 +685,7 @@
       isFlipped = true;
       document.getElementById("cardModal").classList.add("hidden");
       saveState();
-      renderUI();
+      renderUI(true);
     };
 
     document.getElementById("cancelCardModal").onclick = () => {
@@ -609,7 +724,7 @@
       isFlipped = true;
       document.getElementById("deckModal").classList.add("hidden");
       saveState();
-      renderUI();
+      renderUI(true);
     };
 
     document.getElementById("cancelDeckModal").onclick = () => {
@@ -630,7 +745,7 @@
       renderUI();
     };
 
-    renderUI();
+    renderUI(true);
   </script>
 </body>
 </html>
