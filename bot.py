@@ -37,6 +37,20 @@ def save_subs(subs):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(subs, f, ensure_ascii=False, indent=2)
 
+# 0. СТАРТ И КНОПКА ЗАПУСКА MINI APP
+@dp.message(Command("start"))
+async def start_cmd(message: types.Message):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🎮 Открыть Перевёртыш", 
+            web_app=types.WebAppInfo(url="https://realpusyastar.github.io/Perevertysh/")
+        )]
+    ])
+    await message.answer(
+        "👋 Привет! Нажми кнопку ниже, чтобы запустить игру:",
+        reply_markup=kb
+    )
+
 # 1. ОБРАБОТКА СИГНАЛОВ НА ОПЛАТУ ИЗ MINI APP
 @dp.message(F.web_app_data)
 async def handle_webapp_payment(message: types.Message):
