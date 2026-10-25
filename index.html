@@ -45,24 +45,17 @@
       <h1 class="font-extrabold text-white text-sm tracking-wide">Перевёртыш</h1>
     </div>
     
-    <div class="flex items-center gap-2">
-      <button id="toggleAutoSpeechBtn" class="flex items-center gap-1.5 bg-[#1E2D4A] border border-blue-500/30 text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-xl active:scale-95 transition-all shadow-sm">
-        <span id="speechIcon">🔊</span>
-        <span id="speechText">Авто</span>
+    <div id="headerStatusArea">
+      <button id="buyProBtn" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md active:scale-95 transition-transform">
+        PRO
       </button>
-
-      <div id="headerStatusArea">
-        <button id="buyProBtn" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md active:scale-95 transition-transform">
-          PRO
-        </button>
-        <div id="proActiveBadge" class="hidden items-center gap-1 bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
-          <span>★</span> PRO активен
-        </div>
+      <div id="proActiveBadge" class="hidden items-center gap-1 bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+        <span>★</span> PRO активен
       </div>
     </div>
   </header>
 
-  <!-- Список колод -->
+  <!-- Список блоков -->
   <div class="flex gap-2 overflow-x-auto py-2 no-scrollbar" id="decksContainer"></div>
 
   <!-- Карточка -->
@@ -93,9 +86,8 @@
           
           <!-- Сторона 1: Родной язык -->
           <div class="absolute inset-0 backface-hidden rounded-3xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white shadow-[0_20px_50px_rgba(234,88,12,0.35)] p-6 flex flex-col justify-between border-2 border-orange-300/40">
-            <div class="flex justify-between items-center text-xs text-orange-100 font-extrabold tracking-wider uppercase">
+            <div class="text-xs text-orange-100 font-extrabold tracking-wider uppercase">
               <span class="bg-black/20 px-2.5 py-1 rounded-lg backdrop-blur-sm">РОДНОЙ ЯЗЫК</span>
-              <button id="manualSpeakFront" class="p-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm active:scale-90 transition-transform shadow">🔊</button>
             </div>
             <div id="cardFrontText" class="text-center font-black text-3xl px-2 break-words text-white tracking-tight drop-shadow-md">Привет</div>
             <div class="text-[11px] text-orange-100/90 text-center font-bold">↔ Свайп для следующего</div>
@@ -103,12 +95,11 @@
 
           <!-- Сторона 2: Изучаемый язык -->
           <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white shadow-[0_20px_50px_rgba(37,99,235,0.4)] p-6 flex flex-col justify-between border-2 border-blue-300/40">
-            <div class="flex justify-between items-center text-xs text-blue-100 uppercase font-extrabold tracking-wider">
+            <div class="text-xs text-blue-100 uppercase font-extrabold tracking-wider">
               <button id="changeLangQuickBtn" class="flex items-center gap-1.5 bg-black/25 hover:bg-black/40 border border-white/20 px-3 py-1.5 rounded-xl active:scale-95 shadow backdrop-blur-sm transition-all">
                 <span id="targetLangLabel" class="text-white font-extrabold">АНГЛИЙСКИЙ</span>
                 <span class="text-[10px] opacity-80">✏️</span>
               </button>
-              <button id="manualSpeakBack" class="p-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl text-sm active:scale-90 shadow">🔊</button>
             </div>
             <div id="cardBackText" class="text-center font-black text-3xl px-2 break-words text-[#FEF08A] tracking-tight drop-shadow-md">Hello</div>
             <div class="text-[11px] text-blue-100/90 text-center font-bold">Тапните для проверки перевода</div>
@@ -117,7 +108,7 @@
         </div>
       </div>
 
-      <!-- Кнопки управления -->
+      <!-- Навигация: 2 кнопки -->
       <div class="grid grid-cols-2 gap-3 mt-4 px-1">
         <button id="flipBtn" class="py-3.5 bg-[#16233B] border border-blue-400/40 hover:border-blue-300 text-blue-200 rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-2 shadow-md transition-all">
           <span>🔄</span> Разворот
@@ -136,7 +127,7 @@
     </div>
   </main>
 
-  <!-- Добавление слова -->
+  <!-- Добавление карточки -->
   <footer class="pt-1">
     <button id="addCardBtn" class="w-full bg-[#16233B] hover:bg-[#1C2C4B] border border-blue-900/60 text-slate-100 font-extrabold py-3 rounded-2xl text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5">
       <span class="text-amber-400 font-black text-base">+</span> Добавить карточку <span id="deckCardCountBadge" class="text-xs font-bold text-slate-400">(0/10)</span>
@@ -150,16 +141,16 @@
       <div>
         <label class="text-xs text-slate-400 block mb-1">Выберите язык</label>
         <select id="quickLangSelect" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
-          <option value="en">Английский</option>
-          <option value="de">Немецкий</option>
-          <option value="fr">Французский</option>
-          <option value="es">Испанский</option>
-          <option value="it">Итальянский</option>
-          <option value="tr">Турецкий</option>
-          <option value="zh">Китайский</option>
-          <option value="ja">Японский</option>
-          <option value="ko">Корейский</option>
-          <option value="ar">Арабский</option>
+          <option value="Английский">Английский</option>
+          <option value="Немецкий">Немецкий</option>
+          <option value="Французский">Французский</option>
+          <option value="Испанский">Испанский</option>
+          <option value="Итальянский">Итальянский</option>
+          <option value="Турецкий">Турецкий</option>
+          <option value="Китайский">Китайский</option>
+          <option value="Японский">Японский</option>
+          <option value="Корейский">Корейский</option>
+          <option value="Арабский">Арабский</option>
         </select>
       </div>
       <div class="flex gap-2 pt-2">
@@ -209,21 +200,21 @@
       <h3 class="font-bold text-white text-base">Новый блок</h3>
       <div>
         <label class="text-xs text-slate-400 block mb-1">Название блока</label>
-        <input id="deckTitleInput" type="text" placeholder="Например: В аэропорту" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        <input id="deckTitleInput" type="text" placeholder="Например: В поездке" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
       </div>
       <div>
         <label class="text-xs text-slate-400 block mb-1">Язык</label>
         <select id="deckLangSelect" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-          <option value="en">Английский</option>
-          <option value="de">Немецкий</option>
-          <option value="fr">Французский</option>
-          <option value="es">Испанский</option>
-          <option value="it">Итальянский</option>
-          <option value="tr">Турецкий</option>
-          <option value="zh">Китайский</option>
-          <option value="ja">Японский</option>
-          <option value="ko">Корейский</option>
-          <option value="ar">Арабский</option>
+          <option value="Английский">Английский</option>
+          <option value="Немецкий">Немецкий</option>
+          <option value="Французский">Французский</option>
+          <option value="Испанский">Испанский</option>
+          <option value="Итальянский">Итальянский</option>
+          <option value="Турецкий">Турецкий</option>
+          <option value="Китайский">Китайский</option>
+          <option value="Японский">Японский</option>
+          <option value="Корейский">Корейский</option>
+          <option value="Арабский">Арабский</option>
         </select>
       </div>
       <div class="flex gap-2 pt-2">
@@ -260,16 +251,13 @@
     }
 
     let isPro = localStorage.getItem("pv_pro") === "true";
-    let isAutoSpeech = localStorage.getItem("pv_speech") !== "false";
-
-    let decks = JSON.parse(localStorage.getItem("pv_decks_tg_app") || "null");
+    let decks = JSON.parse(localStorage.getItem("pv_decks_pure") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
         id: "d1",
         title: "Базовый набор",
         targetLangName: "Английский",
-        targetLangCode: "en",
         cards: [
           { id: "c1", front: "Привет", back: "Hello" },
           { id: "c2", front: "Спасибо", back: "Thank you" },
@@ -284,106 +272,11 @@
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_tg_app", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_pure", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
-      localStorage.setItem("pv_speech", isAutoSpeech ? "true" : "false");
     }
 
-    // --- ПРЯМОЙ И НАДЕЖНЫЙ АУДИОДВИЖОК ДЛЯ ПРИЛОЖЕНИЯ TELEGRAM ---
-    const mobileAudio = new Audio();
-    let hasInteracted = false;
-
-    // Снимаем блокировку аудио Telegram при первом же касании любого элемента
-    function unlockAudioOnce() {
-      if (hasInteracted) return;
-      hasInteracted = true;
-      mobileAudio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
-      mobileAudio.play().catch(() => {});
-    }
-    window.addEventListener("touchstart", unlockAudioOnce, { passive: true });
-    window.addEventListener("click", unlockAudioOnce, { passive: true });
-
-    // Воспроизведение через открытый шлюз Google Translate (client=gtx),
-    // который официально разрешен для мобильных приложений без CORS и ошибок 403
-    function speakText(text, langCode) {
-      if (!text) return;
-      unlockAudioOnce();
-
-      const lang = (langCode || "en").toLowerCase().slice(0, 2);
-      const cleanText = encodeURIComponent(text.trim());
-
-      try {
-        mobileAudio.pause();
-        mobileAudio.currentTime = 0;
-        // Этот шлюз стабильно работает прямо внутри мобильного приложения Telegram
-        mobileAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=gtx&tl=${lang}&q=${cleanText}`;
-        mobileAudio.playbackRate = 0.95;
-        
-        const playPromise = mobileAudio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(e => {
-            console.log("Audio playback waiting for interaction");
-          });
-        }
-      } catch (err) {
-        console.error("Audio error:", err);
-      }
-    }
-
-    function autoSpeakCurrent() {
-      if (!isAutoSpeech) return;
-      const activeDeck = decks.find(d => d.id === activeDeckId);
-      const card = activeDeck?.cards[cardIndex];
-      if (!card) return;
-
-      if (isFlipped) {
-        speakText(card.back, activeDeck.targetLangCode || "en");
-      } else {
-        speakText(card.front, "ru");
-      }
-    }
-
-    function triggerManualSpeech(side) {
-      const activeDeck = decks.find(d => d.id === activeDeckId);
-      const card = activeDeck?.cards[cardIndex];
-      if (!card) return;
-      if (side === "back") speakText(card.back, activeDeck.targetLangCode || "en");
-      else speakText(card.front, "ru");
-    }
-
-    document.getElementById("manualSpeakFront").onclick = (e) => {
-      e.stopPropagation();
-      triggerManualSpeech("front");
-    };
-
-    document.getElementById("manualSpeakBack").onclick = (e) => {
-      e.stopPropagation();
-      triggerManualSpeech("back");
-    };
-
-    function updateSpeechButtonUI() {
-      const icon = document.getElementById("speechIcon");
-      const text = document.getElementById("speechText");
-      if (isAutoSpeech) {
-        icon.textContent = "🔊";
-        text.textContent = "Авто";
-      } else {
-        icon.textContent = "🔇";
-        text.textContent = "Выкл";
-      }
-    }
-
-    document.getElementById("toggleAutoSpeechBtn").onclick = () => {
-      isAutoSpeech = !isAutoSpeech;
-      updateSpeechButtonUI();
-      saveState();
-      if (isAutoSpeech) autoSpeakCurrent();
-      else mobileAudio.pause();
-    };
-
-    function renderUI(triggerSpeech = false) {
-      updateSpeechButtonUI();
-
+    function renderUI() {
       const buyBtn = document.getElementById("buyProBtn");
       const activeBadge = document.getElementById("proActiveBadge");
       if (isPro) {
@@ -430,7 +323,7 @@
               cardIndex = 0;
               isFlipped = true;
               saveState();
-              renderUI(true);
+              renderUI();
             }
           };
           btn.appendChild(del);
@@ -440,7 +333,7 @@
           activeDeckId = d.id;
           cardIndex = 0;
           isFlipped = true;
-          renderUI(true);
+          renderUI();
         };
         container.appendChild(btn);
       });
@@ -454,7 +347,7 @@
           return;
         }
         document.getElementById("deckTitleInput").value = "";
-        document.getElementById("deckLangSelect").value = "en";
+        document.getElementById("deckLangSelect").value = "Английский";
         document.getElementById("deckModal").classList.remove("hidden");
       };
       container.appendChild(addDeckBtn);
@@ -486,24 +379,20 @@
       const inner = document.getElementById("cardInner");
       if (isFlipped) inner.classList.add("rotate-y-180");
       else inner.classList.remove("rotate-y-180");
-
-      if (triggerSpeech) {
-        autoSpeakCurrent();
-      }
     }
 
     // Разворот карточки по тапу
     document.getElementById("cardBox").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
-      renderUI(true);
+      renderUI();
     };
 
     // Кнопка «Разворот»
     document.getElementById("flipBtn").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
-      renderUI(true);
+      renderUI();
     };
 
     // Кнопка «Вперёд ▶»
@@ -513,7 +402,7 @@
       haptic("light");
       isFlipped = true;
       cardIndex = (cardIndex + 1) % activeDeck.cards.length;
-      renderUI(true);
+      renderUI();
     };
 
     // Свайпы
@@ -535,7 +424,7 @@
         } else {
           cardIndex = (cardIndex - 1 + activeDeck.cards.length) % activeDeck.cards.length;
         }
-        renderUI(true);
+        renderUI();
       }
     }, { passive: true });
 
@@ -544,7 +433,7 @@
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck) return;
-      document.getElementById("quickLangSelect").value = activeDeck.targetLangCode || "en";
+      document.getElementById("quickLangSelect").value = activeDeck.targetLangName || "Английский";
       document.getElementById("langModal").classList.remove("hidden");
     };
 
@@ -552,11 +441,10 @@
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck) return;
       const select = document.getElementById("quickLangSelect");
-      activeDeck.targetLangCode = select.value;
-      activeDeck.targetLangName = select.options[select.selectedIndex].text;
+      activeDeck.targetLangName = select.value;
       document.getElementById("langModal").classList.add("hidden");
       saveState();
-      renderUI(true);
+      renderUI();
     };
 
     document.getElementById("cancelLangModal").onclick = () => {
@@ -617,7 +505,7 @@
         cardIndex = 0;
         isFlipped = true;
         saveState();
-        renderUI(true);
+        renderUI();
       }
     };
 
@@ -638,7 +526,7 @@
       isFlipped = true;
       document.getElementById("cardModal").classList.add("hidden");
       saveState();
-      renderUI(true);
+      renderUI();
     };
 
     document.getElementById("cancelCardModal").onclick = () => {
@@ -654,8 +542,7 @@
       const newDeck = {
         id: "d_" + Date.now(),
         title,
-        targetLangName: select.options[select.selectedIndex].text,
-        targetLangCode: select.value,
+        targetLangName: select.value,
         cards: []
       };
 
@@ -665,7 +552,7 @@
       isFlipped = true;
       document.getElementById("deckModal").classList.add("hidden");
       saveState();
-      renderUI(true);
+      renderUI();
     };
 
     document.getElementById("cancelDeckModal").onclick = () => {
@@ -686,7 +573,7 @@
       renderUI();
     };
 
-    renderUI(true);
+    renderUI();
   </script>
 </body>
 </html>
