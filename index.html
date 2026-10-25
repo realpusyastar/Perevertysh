@@ -35,7 +35,7 @@
   <main class="flex-1 flex flex-col justify-center items-center my-2">
     <div id="cardWrapper" class="w-full">
       <div class="flex items-center justify-between text-xs text-slate-400 px-2 mb-2">
-        <span id="cardCounter">Слово 1 из 1</span>
+        <span id="cardCounter">Слово 1 из 3</span>
         <div class="flex gap-2">
           <button id="editCardBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 active:scale-95 text-[11px]">✏️ Изменить</button>
           <button id="deleteCardBtn" class="px-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-red-400 active:scale-95 text-[11px]">🗑️</button>
@@ -44,7 +44,7 @@
 
       <div id="cardBox" class="w-full h-80 perspective cursor-pointer">
         <div id="cardInner" class="relative w-full h-full duration-500 preserve-3d transition-transform">
-          <!-- Лицевая сторона -->
+          <!-- Лицевая сторона (Родной) -->
           <div class="absolute inset-0 backface-hidden rounded-3xl bg-white text-slate-900 shadow-2xl p-6 flex flex-col justify-between border-4 border-slate-100">
             <div class="flex justify-between items-center text-xs text-slate-400 font-bold uppercase">
               <span>Родной язык</span>
@@ -54,10 +54,14 @@
             <div class="text-xs text-slate-400 text-center">↔ Свайп влево / вправо</div>
           </div>
 
-          <!-- Оборотная сторона -->
+          <!-- Оборотная сторона (Изучаемый) -->
           <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-950 text-white shadow-2xl p-6 flex flex-col justify-between border-2 border-purple-400/30">
             <div class="flex justify-between items-center text-xs text-purple-200 uppercase font-bold">
-              <span id="targetLangLabel">Английский</span>
+              <!-- Кликабельная смена языка прямо с карточки -->
+              <button id="changeLangQuickBtn" class="flex items-center gap-1 bg-purple-900/60 border border-purple-400/40 px-2 py-1 rounded-lg active:scale-95">
+                <span id="targetLangLabel">АНГЛИЙСКИЙ</span>
+                <span class="text-[10px] opacity-75">✏️</span>
+              </button>
               <button id="ttsBtn" class="p-1.5 bg-purple-600/40 border border-purple-400 rounded-lg text-sm active:scale-90">🔊</button>
             </div>
             <div id="cardBackText" class="text-center font-bold text-2xl px-2 break-words">Hello</div>
@@ -66,11 +70,14 @@
         </div>
       </div>
 
-      <!-- Кнопки управления -->
-      <div class="flex justify-between items-center mt-5 px-3">
-        <button id="prevBtn" class="px-4 py-2.5 bg-slate-900 rounded-2xl border border-slate-800 text-xs font-semibold text-slate-300 active:scale-95">◀ Предыдущая</button>
-        <button id="flipBtn" class="px-4 py-2.5 bg-teal-500/10 border border-teal-500/30 text-teal-300 rounded-2xl text-xs font-bold active:scale-95">🔄 Перевернуть</button>
-        <button id="nextBtn" class="px-4 py-2.5 bg-slate-900 rounded-2xl border border-slate-800 text-xs font-semibold text-slate-300 active:scale-95">Следующая ▶</button>
+      <!-- Кнопки управления и ВЕРТУШКА -->
+      <div class="grid grid-cols-4 gap-2 mt-4 px-1">
+        <button id="prevBtn" class="py-2.5 bg-slate-900 rounded-2xl border border-slate-800 text-xs font-semibold text-slate-300 active:scale-95">◀ Назад</button>
+        <button id="flipBtn" class="py-2.5 bg-teal-500/10 border border-teal-500/30 text-teal-300 rounded-2xl text-xs font-bold active:scale-95">🔄 Переворот</button>
+        <button id="vertushkaBtn" class="py-2.5 bg-purple-600/20 border border-purple-500/40 text-purple-300 rounded-2xl text-xs font-bold active:scale-95 flex items-center justify-center gap-1 shadow">
+          <span>🌪️</span> Вертушка
+        </button>
+        <button id="nextBtn" class="py-2.5 bg-slate-900 rounded-2xl border border-slate-800 text-xs font-semibold text-slate-300 active:scale-95">Вперёд ▶</button>
       </div>
     </div>
 
@@ -87,17 +94,13 @@
     + Добавить новую карточку
   </button>
 
-  <!-- Модалка колоды -->
-  <div id="deckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+  <!-- Модалка: Смена языка текущего блока -->
+  <div id="langModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl w-full max-w-sm space-y-3.5">
-      <h3 class="font-bold text-white text-base">Создание нового блока</h3>
+      <h3 class="font-bold text-white text-base">Изменить изучаемый язык</h3>
       <div>
-        <label class="text-xs text-slate-400 block mb-1">Название блока</label>
-        <input id="deckTitleInput" type="text" placeholder="Например: Ресторан" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-500">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Какой язык изучаем?</label>
-        <select id="deckLangSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-500">
+        <label class="text-xs text-slate-400 block mb-1">Выберите язык</label>
+        <select id="quickLangSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
           <option value="en-US">Английский</option>
           <option value="de-DE">Немецкий</option>
           <option value="fr-FR">Французский</option>
@@ -108,11 +111,46 @@
           <option value="ja-JP">Японский</option>
           <option value="ko-KR">Корейский</option>
           <option value="ar-SA">Арабский</option>
-          <option value="other">Любой другой</option>
+          <option value="other">Другой язык</option>
+        </select>
+      </div>
+      <div id="quickCustomBox" class="hidden">
+        <label class="text-xs text-slate-400 block mb-1">Название языка</label>
+        <input id="quickCustomInput" type="text" placeholder="Например: Португальский" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="cancelLangModal" class="flex-1 py-2.5 bg-slate-800 rounded-xl text-xs font-semibold">Отмена</button>
+        <button id="saveQuickLangBtn" class="flex-1 py-2.5 bg-teal-500 text-slate-950 font-bold rounded-xl text-xs">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка: Создание колоды -->
+  <div id="deckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl w-full max-w-sm space-y-3.5">
+      <h3 class="font-bold text-white text-base">Создание нового блока</h3>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Название блока</label>
+        <input id="deckTitleInput" type="text" placeholder="Например: Ресторан" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Какой язык изучаем?</label>
+        <select id="deckLangSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
+          <option value="en-US">Английский</option>
+          <option value="de-DE">Немецкий</option>
+          <option value="fr-FR">Французский</option>
+          <option value="es-ES">Испанский</option>
+          <option value="it-IT">Итальянский</option>
+          <option value="tr-TR">Турецкий</option>
+          <option value="zh-CN">Китайский</option>
+          <option value="ja-JP">Японский</option>
+          <option value="ko-KR">Корейский</option>
+          <option value="ar-SA">Арабский</option>
+          <option value="other">Другой язык</option>
         </select>
       </div>
       <div id="customLangBox" class="hidden">
-        <label class="text-xs text-slate-400 block mb-1">Напишите название языка</label>
+        <label class="text-xs text-slate-400 block mb-1">Название языка</label>
         <input id="customLangInput" type="text" placeholder="Например: Португальский" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
       </div>
       <div class="flex gap-2 pt-2">
@@ -148,7 +186,7 @@
         <h3 class="font-bold text-white text-base">Подписка PRO</h3>
         <button id="closeProModal" class="text-slate-400 font-bold">✕</button>
       </div>
-      <p class="text-xs text-slate-300">С PRO-подпиской вы можете создавать неограниченное количество блоков под любые языки.</p>
+      <p class="text-xs text-slate-300">С PRO-подпиской можно создавать сколько угодно блоков для изучения любых языков.</p>
       <div class="bg-slate-950 p-4 rounded-2xl text-center border border-amber-500/20">
         <div class="text-xl font-bold text-amber-400 mb-1">150 ★ Stars / 1.5 TON</div>
         <p class="text-[11px] text-slate-400 mb-3">Оплата через Telegram</p>
@@ -168,7 +206,7 @@
     }
 
     let isPro = localStorage.getItem("pv_pro") === "true";
-    let decks = JSON.parse(localStorage.getItem("pv_decks_v3") || "null");
+    let decks = JSON.parse(localStorage.getItem("pv_decks_v4") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
@@ -190,16 +228,14 @@
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_v3", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_v4", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
     }
 
     function renderUI() {
-      // Pro статус
       document.getElementById("proBadge").textContent = isPro ? "★ PRO ДОСТУП" : "FREE ТАРИФ (1 блок)";
       document.getElementById("buyProBtn").style.display = isPro ? "none" : "block";
 
-      // Список блоков
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
@@ -235,7 +271,6 @@
         container.appendChild(btn);
       });
 
-      // Кнопка добавления колоды
       const addDeckBtn = document.createElement("button");
       addDeckBtn.className = "px-3 py-1.5 rounded-xl text-xs bg-teal-950/60 border border-dashed border-teal-600 text-teal-300 whitespace-nowrap";
       addDeckBtn.textContent = `+ Новый блок ${isPro ? "" : "(PRO)"}`;
@@ -269,7 +304,7 @@
       document.getElementById("cardCounter").textContent = `Слово ${cardIndex + 1} из ${activeDeck.cards.length}`;
       document.getElementById("cardFrontText").textContent = card.front;
       document.getElementById("cardBackText").textContent = card.back;
-      document.getElementById("targetLangLabel").textContent = activeDeck.targetLangName || "Иностранный";
+      document.getElementById("targetLangLabel").textContent = (activeDeck.targetLangName || "Иностранный").toUpperCase();
       document.getElementById("addCardBtn").textContent = `+ Добавить новую карточку (${activeDeck.cards.length}/30)`;
 
       const inner = document.getElementById("cardInner");
@@ -277,7 +312,7 @@
       else inner.classList.remove("rotate-y-180");
     }
 
-    // Переворот
+    // Переворот карточки
     document.getElementById("cardBox").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
@@ -286,6 +321,24 @@
     document.getElementById("flipBtn").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
+      renderUI();
+    };
+
+    // РЕЖИМ «ВЕРТУШКА»: Перемешать и открыть иностранной стороной
+    document.getElementById("vertushkaBtn").onclick = () => {
+      const activeDeck = decks.find(d => d.id === activeDeckId);
+      if (!activeDeck || activeDeck.cards.length <= 1) return;
+      haptic("heavy");
+      
+      // Алгоритм перемешивания Фишера-Йетса
+      for (let i = activeDeck.cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [activeDeck.cards[i], activeDeck.cards[j]] = [activeDeck.cards[j], activeDeck.cards[i]];
+      }
+      
+      cardIndex = 0;
+      isFlipped = true; // Сразу открываем изучаемой (иностранной) стороной!
+      saveState();
       renderUI();
     };
 
@@ -308,7 +361,7 @@
       renderUI();
     };
 
-    // Свайпы на телефоне
+    // Свайпы
     let touchStartX = 0;
     const cardBox = document.getElementById("cardBox");
     cardBox.addEventListener("touchstart", (e) => {
@@ -334,6 +387,44 @@
         u.lang = activeDeck.targetLangCode || "en-US";
         window.speechSynthesis.speak(u);
       }
+    };
+
+    // Быстрое редактирование языка прямо по тапу на плашку карточки
+    document.getElementById("changeLangQuickBtn").onclick = (e) => {
+      e.stopPropagation();
+      const activeDeck = decks.find(d => d.id === activeDeckId);
+      if (!activeDeck) return;
+      document.getElementById("quickLangSelect").value = activeDeck.targetLangCode || "en-US";
+      document.getElementById("quickCustomBox").classList.add("hidden");
+      document.getElementById("langModal").classList.remove("hidden");
+    };
+
+    document.getElementById("quickLangSelect").onchange = (e) => {
+      if (e.target.value === "other") document.getElementById("quickCustomBox").classList.remove("hidden");
+      else document.getElementById("quickCustomBox").classList.add("hidden");
+    };
+
+    document.getElementById("saveQuickLangBtn").onclick = () => {
+      const activeDeck = decks.find(d => d.id === activeDeckId);
+      if (!activeDeck) return;
+      const select = document.getElementById("quickLangSelect");
+      const langCode = select.value;
+      let langName = select.options[select.selectedIndex].text;
+
+      if (langCode === "other") {
+        const custom = document.getElementById("quickCustomInput").value.trim();
+        if (custom) langName = custom;
+      }
+
+      activeDeck.targetLangName = langName;
+      activeDeck.targetLangCode = langCode === "other" ? "en-US" : langCode;
+      document.getElementById("langModal").classList.add("hidden");
+      saveState();
+      renderUI();
+    };
+
+    document.getElementById("cancelLangModal").onclick = () => {
+      document.getElementById("langModal").classList.add("hidden");
     };
 
     // Добавление карточки
@@ -365,7 +456,7 @@
       document.getElementById("cardModal").classList.remove("hidden");
     };
 
-    // Удаление текущей карточки
+    // Удаление карточки
     document.getElementById("deleteCardBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
