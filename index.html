@@ -224,21 +224,33 @@
     </div>
   </div>
 
-  <!-- Модалка PRO -->
+  <!-- Модалка PRO с выбором двух вариантов оплаты -->
   <div id="proModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-4 shadow-2xl">
       <div class="flex justify-between items-center">
         <h3 class="font-bold text-white text-base">Тариф PRO</h3>
         <button id="closeProModal" class="text-slate-400 font-bold p-1">✕</button>
       </div>
-      <p class="text-xs text-slate-300 leading-relaxed">В бесплатной версии доступен 1 блок. С PRO создавайте неограниченное число блоков по 10 карточек под любые языки.</p>
-      <div class="bg-[#0B1120] p-4 rounded-2xl text-center border border-amber-500/20">
-        <div class="text-xl font-bold text-amber-400 mb-1">150 ★ Stars / 1.5 TON</div>
-        <p class="text-[11px] text-slate-400 mb-3">Оплата внутри Telegram</p>
-        <button id="activateProBtn" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs active:scale-95 shadow">
-          Активировать PRO
+      
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Неограниченное число блоков по 10 карточек и доступ ко всем функциям без лимитов.
+      </p>
+
+      <div class="space-y-2.5">
+        <!-- Вариант 1: Telegram Stars -->
+        <button id="payWithStarsBtn" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3 rounded-2xl text-xs active:scale-95 shadow-md flex items-center justify-center gap-2 transition-transform">
+          <span>★</span> Оплатить Звёздами (150 Stars)
+        </button>
+
+        <!-- Вариант 2: Криптовалюта (TON / USDT) -->
+        <button id="payWithCryptoBtn" class="w-full bg-[#1A2640] hover:bg-[#223254] border border-blue-500/40 text-blue-200 font-bold py-3 rounded-2xl text-xs active:scale-95 shadow-md flex items-center justify-center gap-2 transition-all">
+          <span>💎</span> Оплатить криптовалютой (TON / USDT)
         </button>
       </div>
+
+      <p class="text-[10px] text-slate-400 text-center">
+        Подписка активируется автоматически сразу после оплаты
+      </p>
     </div>
   </div>
 
@@ -559,18 +571,30 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // PRO
+    // Открытие модалки PRO
     document.getElementById("buyProBtn").onclick = () => {
       document.getElementById("proModal").classList.remove("hidden");
     };
     document.getElementById("closeProModal").onclick = () => {
       document.getElementById("proModal").classList.add("hidden");
     };
-    document.getElementById("activateProBtn").onclick = () => {
-      isPro = true;
-      document.getElementById("proModal").classList.add("hidden");
-      saveState();
-      renderUI();
+
+    // Обработчик кнопки Stars
+    document.getElementById("payWithStarsBtn").onclick = () => {
+      if (window.Telegram?.WebApp) {
+        Telegram.WebApp.sendData(JSON.stringify({ action: "buy_pro_stars" }));
+      } else {
+        alert("Оплата доступна внутри мобильного Telegram");
+      }
+    };
+
+    // Обработчик кнопки Crypto
+    document.getElementById("payWithCryptoBtn").onclick = () => {
+      if (window.Telegram?.WebApp) {
+        Telegram.WebApp.sendData(JSON.stringify({ action: "buy_pro_crypto" }));
+      } else {
+        alert("Оплата доступна внутри мобильного Telegram");
+      }
     };
 
     renderUI();
