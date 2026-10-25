@@ -13,8 +13,7 @@ from aiogram.types import (
 import aiohttp
 
 # ================= КОНФИГУРАЦИЯ =================
-BOT_TOKEN = os.getenv("BOT_TOKEN",8645559012:AAER-t_KkX3Qf5vjNTS66ZOha7PZDJN5sB")
-
+BOT_TOKEN = "8645559012:AAER-t_KkX3Qf5vjNTS66ZOha7PZDJN5sBs"
 ADMIN_ID = 6845733552
 CRYPTO_BOT_TOKEN = os.getenv("CRYPTO_BOT_TOKEN", "659079:AAQgt4MWbonxZOeWfZfF3trNmt8xluwzCgw")
 # ================================================
