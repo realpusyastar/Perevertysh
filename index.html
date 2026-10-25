@@ -108,13 +108,19 @@
         </div>
       </div>
 
-      <!-- Навигация: 2 кнопки -->
-      <div class="grid grid-cols-2 gap-3 mt-4 px-1">
-        <button id="flipBtn" class="py-3.5 bg-[#16233B] border border-blue-400/40 hover:border-blue-300 text-blue-200 rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-2 shadow-md transition-all">
-          <span>🔄</span> Разворот
+      <!-- Навигация: Разворот + Кнопка Перемешивания посередине + Вперёд -->
+      <div class="flex items-center gap-2.5 mt-4 px-1">
+        <button id="flipBtn" class="flex-1 py-3.5 bg-[#16233B] border border-blue-400/40 hover:border-blue-300 text-blue-200 rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-1.5 shadow-md transition-all">
+          <span>🔄</span> <span>Разворот</span>
         </button>
-        <button id="nextBtn" class="py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/60 transition-all">
-          <span>Вперёд</span> ▶
+
+        <!-- Кнопка случайного смешивания карточек -->
+        <button id="shuffleBtn" title="Перемешать карточки" class="w-12 h-12 bg-[#16233B] hover:bg-[#1E2D4A] border border-amber-500/50 hover:border-amber-400 text-amber-300 rounded-2xl text-xl flex items-center justify-center shrink-0 shadow-md active:scale-90 transition-all">
+          🔀
+        </button>
+
+        <button id="nextBtn" class="flex-1 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-950/60 transition-all">
+          <span>Вперёд</span> <span>▶</span>
         </button>
       </div>
 
@@ -224,7 +230,7 @@
     </div>
   </div>
 
-  <!-- Модалка PRO с выбором двух вариантов оплаты -->
+  <!-- Модалка PRO -->
   <div id="proModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-4 shadow-2xl">
       <div class="flex justify-between items-center">
@@ -237,12 +243,10 @@
       </p>
 
       <div class="space-y-2.5">
-        <!-- Вариант 1: Telegram Stars -->
         <button id="payWithStarsBtn" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3 rounded-2xl text-xs active:scale-95 shadow-md flex items-center justify-center gap-2 transition-transform">
           <span>★</span> Оплатить Звёздами (150 Stars)
         </button>
 
-        <!-- Вариант 2: Криптовалюта (TON / USDT) -->
         <button id="payWithCryptoBtn" class="w-full bg-[#1A2640] hover:bg-[#223254] border border-blue-500/40 text-blue-200 font-bold py-3 rounded-2xl text-xs active:scale-95 shadow-md flex items-center justify-center gap-2 transition-all">
           <span>💎</span> Оплатить криптовалютой (TON / USDT)
         </button>
@@ -286,6 +290,16 @@
     function saveState() {
       localStorage.setItem("pv_decks_pure", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
+    }
+
+    // Алгоритм Фишера — Йетса для честного неповторяющегося случайного порядка
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
 
     function renderUI() {
@@ -404,6 +418,20 @@
     document.getElementById("flipBtn").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
+      renderUI();
+    };
+
+    // Кнопка «Перемешать» 🔀
+    document.getElementById("shuffleBtn").onclick = () => {
+      const activeDeck = decks.find(d => d.id === activeDeckId);
+      if (!activeDeck || activeDeck.cards.length <= 1) return;
+      haptic("medium");
+      
+      // Перемешиваем карточки случайным образом
+      activeDeck.cards = shuffleArray(activeDeck.cards);
+      cardIndex = 0;
+      isFlipped = true;
+      saveState();
       renderUI();
     };
 
@@ -571,7 +599,7 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // Открытие модалки PRO
+    // PRO
     document.getElementById("buyProBtn").onclick = () => {
       document.getElementById("proModal").classList.remove("hidden");
     };
@@ -579,7 +607,6 @@
       document.getElementById("proModal").classList.add("hidden");
     };
 
-    // Обработчик кнопки Stars
     document.getElementById("payWithStarsBtn").onclick = () => {
       if (window.Telegram?.WebApp) {
         Telegram.WebApp.sendData(JSON.stringify({ action: "buy_pro_stars" }));
@@ -588,7 +615,6 @@
       }
     };
 
-    // Обработчик кнопки Crypto
     document.getElementById("payWithCryptoBtn").onclick = () => {
       if (window.Telegram?.WebApp) {
         Telegram.WebApp.sendData(JSON.stringify({ action: "buy_pro_crypto" }));
