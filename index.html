@@ -18,8 +18,8 @@
 </head>
 <body class="bg-[#0B1120] text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans antialiased">
 
-  <!-- Шапка (только название и логотип) -->
-  <header class="flex items-center justify-between py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
+  <!-- Шапка -->
+  <header class="flex justify-between items-center py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full overflow-hidden border border-blue-400/50 shadow-md shrink-0 flex items-center justify-center bg-[#2563EB]">
         <svg viewBox="0 0 100 100" class="w-full h-full">
@@ -44,6 +44,15 @@
       </div>
       <h1 class="font-extrabold text-white text-sm tracking-wide">Перевёртыш</h1>
     </div>
+    
+    <div id="headerStatusArea">
+      <button id="buyProBtn" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md active:scale-95 transition-transform flex items-center gap-1">
+        <span>⭐</span> PRO
+      </button>
+      <div id="proActiveBadge" class="hidden items-center gap-1 bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+        <span>✓</span> PRO активен
+      </div>
+    </div>
   </header>
 
   <!-- Список блоков -->
@@ -56,7 +65,7 @@
       <!-- Прогресс -->
       <div class="space-y-1.5 mb-2.5 px-1">
         <div class="flex items-center justify-between text-[11px] text-slate-300 font-semibold">
-          <span id="cardCounter" class="tracking-wide">Слово 1 из 15</span>
+          <span id="cardCounter" class="tracking-wide">Слово 1 из 3</span>
           <div class="flex gap-2 items-center">
             <button id="editCardBtn" class="px-2.5 py-1 rounded-lg bg-[#16233B] border border-slate-700/80 text-slate-200 active:scale-95 text-[11px] flex items-center gap-1 shadow-sm font-medium">
               ✏️ Изменить
@@ -130,6 +139,43 @@
     </button>
   </footer>
 
+  <!-- Модалка PRO / CryptoBot -->
+  <div id="proModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-white text-base">Полная версия PRO</h3>
+        <button id="closeProModal" class="text-slate-400 font-bold p-1">✕</button>
+      </div>
+      
+      <div class="text-xs text-slate-300 space-y-1.5 bg-[#0B1120] p-3 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-1.5 text-amber-300 font-bold">
+          <span>✨</span> Возможности PRO:
+        </div>
+        <div>• Неограниченное число блоков</div>
+        <div>• Неограниченное количество карточек</div>
+        <div>• Доступ навсегда без ограничений</div>
+      </div>
+
+      <!-- Кнопка перехода к оплате CryptoBot -->
+      <div>
+        <button id="payCryptoDirectBtn" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black py-3 rounded-2xl text-xs active:scale-95 shadow-md flex items-center justify-center gap-2 transition-all">
+          <span>💎</span> Оплатить через CryptoBot
+        </button>
+      </div>
+
+      <!-- Ввод ключа активации -->
+      <div class="pt-2 border-t border-slate-800 space-y-2">
+        <label class="text-[11px] text-slate-400 block">Уже оплатили? Введите код доступа:</label>
+        <div class="flex gap-2">
+          <input id="proKeyInput" type="text" placeholder="Введите код" class="flex-1 bg-[#0B1120] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white uppercase focus:outline-none focus:border-blue-500">
+          <button id="activateProKeyBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs active:scale-95 transition-all">
+            Активировать
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Модалка смены языка -->
   <div id="langModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
@@ -156,7 +202,7 @@
     </div>
   </div>
 
-  <!-- Модалка карточки -->
+  <!-- Модалка создания карточки -->
   <div id="cardModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
       <h3 id="cardModalTitle" class="font-bold text-white text-base">Карточка</h3>
@@ -175,7 +221,7 @@
     </div>
   </div>
 
-  <!-- Модалка имени блока -->
+  <!-- Модалка переименования блока -->
   <div id="renameDeckModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
     <div class="bg-[#131E36] border border-slate-700 p-5 rounded-3xl w-full max-w-sm space-y-3.5 shadow-2xl">
       <h3 class="font-bold text-white text-base">Имя блока</h3>
@@ -221,6 +267,13 @@
   </div>
 
   <script>
+    // ================= НАСТРОЙКИ МОНЕТИЗАЦИИ =================
+    // Вставьте ссылку на созданный счёт из @CryptoBot:
+    const CRYPTO_INVOICE_URL = "https://t.me/CryptoBot"; 
+    // Код для мгновенной активации:
+    const SECRET_PRO_KEY = "PRO2026";
+    // ========================================================
+
     const tg = window.Telegram?.WebApp;
     if (tg) { 
       tg.ready(); 
@@ -231,6 +284,7 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(type);
     }
 
+    let isPro = localStorage.getItem("pv_crypto_pro") === "true";
     let decks = JSON.parse(localStorage.getItem("pv_decks_pure") || "null");
 
     if (!decks || decks.length === 0) {
@@ -253,6 +307,7 @@
 
     function saveState() {
       localStorage.setItem("pv_decks_pure", JSON.stringify(decks));
+      localStorage.setItem("pv_crypto_pro", isPro ? "true" : "false");
     }
 
     function shuffleArray(array) {
@@ -265,19 +320,32 @@
     }
 
     function renderUI() {
+      const buyBtn = document.getElementById("buyProBtn");
+      const activeBadge = document.getElementById("proActiveBadge");
+      if (isPro) {
+        buyBtn.classList.add("hidden");
+        activeBadge.classList.remove("hidden");
+        activeBadge.classList.add("flex");
+      } else {
+        buyBtn.classList.remove("hidden");
+        activeBadge.classList.add("hidden");
+        activeBadge.classList.remove("flex");
+      }
+
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
       decks.forEach(d => {
         const btn = document.createElement("div");
         const isActive = d.id === activeDeckId;
+        const countText = isPro ? `${d.cards.length}` : `${d.cards.length}/15`;
         btn.className = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap cursor-pointer transition-all ${
           isActive ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold shadow-md shadow-blue-950" : "bg-[#131E36] border border-blue-900/50 text-slate-300 font-medium"
         }`;
         
         btn.innerHTML = `
           <span>${d.title}</span>
-          <span class="text-[10px] opacity-75">(${d.cards.length}/15)</span>
+          <span class="text-[10px] opacity-75">(${countText})</span>
           <span class="edit-title-btn ml-0.5 opacity-60 hover:opacity-100 text-[10px] p-0.5">✏️</span>
         `;
 
@@ -314,11 +382,16 @@
         container.appendChild(btn);
       });
 
-      // Бесконечное создание блоков
+      // Кнопка создания блока: заблокирована без PRO, если уже есть 1 блок
       const addDeckBtn = document.createElement("button");
       addDeckBtn.className = "px-3 py-1.5 rounded-xl text-xs bg-[#131E36] border border-dashed border-blue-500/40 text-blue-300 font-bold whitespace-nowrap active:scale-95";
-      addDeckBtn.textContent = "+ Новый блок";
+      addDeckBtn.textContent = isPro ? "+ Новый блок" : "🔒 Новый блок (PRO)";
       addDeckBtn.onclick = () => {
+        if (!isPro && decks.length >= 1) {
+          haptic("medium");
+          document.getElementById("proModal").classList.remove("hidden");
+          return;
+        }
         document.getElementById("deckTitleInput").value = "";
         document.getElementById("deckLangSelect").value = "Английский";
         document.getElementById("deckModal").classList.remove("hidden");
@@ -330,7 +403,7 @@
       if (!activeDeck || activeDeck.cards.length === 0) {
         document.getElementById("cardWrapper").classList.add("hidden");
         document.getElementById("emptyBlockNotice").classList.remove("hidden");
-        document.getElementById("deckCardCountBadge").textContent = "(0/15)";
+        document.getElementById("deckCardCountBadge").textContent = isPro ? "(0)" : "(0/15)";
         return;
       }
 
@@ -347,7 +420,7 @@
       document.getElementById("cardFrontText").textContent = card.front;
       document.getElementById("cardBackText").textContent = card.back;
       document.getElementById("targetLangLabel").textContent = (activeDeck.targetLangName || "Иностранный").toUpperCase();
-      document.getElementById("deckCardCountBadge").textContent = `(${activeDeck.cards.length}/15)`;
+      document.getElementById("deckCardCountBadge").textContent = isPro ? `(${activeDeck.cards.length})` : `(${activeDeck.cards.length}/15)`;
 
       const inner = document.getElementById("cardInner");
       if (isFlipped) inner.classList.add("rotate-y-180");
@@ -451,11 +524,12 @@
       document.getElementById("renameDeckModal").classList.add("hidden");
     };
 
-    // Добавление карточки (лимит: 15 штук)
+    // Добавление карточки (с проверкой лимита 15 для бесплатной версии)
     document.getElementById("addCardBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
-      if (activeDeck && activeDeck.cards.length >= 15) {
-        alert("В этом блоке достигнут лимит 15 карточек!");
+      if (!isPro && activeDeck && activeDeck.cards.length >= 15) {
+        haptic("medium");
+        document.getElementById("proModal").classList.remove("hidden");
         return;
       }
       editingCardId = null;
@@ -518,7 +592,7 @@
       document.getElementById("cardModal").classList.add("hidden");
     };
 
-    // Создание нового блока (без лимитов)
+    // Создание блока
     document.getElementById("confirmSaveDeck").onclick = () => {
       const title = document.getElementById("deckTitleInput").value.trim();
       if (!title) return;
@@ -542,6 +616,40 @@
 
     document.getElementById("cancelDeckModal").onclick = () => {
       document.getElementById("deckModal").classList.add("hidden");
+    };
+
+    // Открытие/закрытие окна PRO
+    document.getElementById("buyProBtn").onclick = () => {
+      document.getElementById("proModal").classList.remove("hidden");
+    };
+    document.getElementById("closeProModal").onclick = () => {
+      document.getElementById("proModal").classList.add("hidden");
+    };
+
+    // Прямой переход к оплате в CryptoBot
+    document.getElementById("payCryptoDirectBtn").onclick = () => {
+      haptic("medium");
+      if (window.Telegram?.WebApp && typeof Telegram.WebApp.openTelegramLink === "function") {
+        Telegram.WebApp.openTelegramLink(CRYPTO_INVOICE_URL);
+      } else {
+        window.open(CRYPTO_INVOICE_URL, "_blank");
+      }
+    };
+
+    // Активация кода PRO
+    document.getElementById("activateProKeyBtn").onclick = () => {
+      const input = document.getElementById("proKeyInput").value.trim().toUpperCase();
+      if (input === SECRET_PRO_KEY) {
+        isPro = true;
+        saveState();
+        document.getElementById("proModal").classList.add("hidden");
+        haptic("heavy");
+        alert("🎉 Поздравляем! Полная версия PRO успешно активирована.");
+        renderUI();
+      } else {
+        haptic("error");
+        alert("Неверный код доступа. Проверьте правильность ввода.");
+      }
     };
 
     renderUI();
