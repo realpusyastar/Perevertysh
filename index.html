@@ -18,7 +18,7 @@
 </head>
 <body class="bg-[#0B1120] text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans antialiased">
 
-  <!-- Шапка -->
+  <!-- Шапка с оригинальным логотипом -->
   <header class="flex justify-between items-center py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full overflow-hidden border border-blue-400/50 shadow-md shrink-0 flex items-center justify-center bg-[#2563EB]">
@@ -62,7 +62,7 @@
     </div>
   </header>
 
-  <!-- Список блоков -->
+  <!-- Список колодок -->
   <div class="flex gap-2 overflow-x-auto py-2 no-scrollbar" id="decksContainer"></div>
 
   <!-- Карточка -->
@@ -87,11 +87,11 @@
         </div>
       </div>
 
-      <!-- 3D Карточка с живым контрастом -->
+      <!-- 3D Карточка -->
       <div id="cardBox" class="w-full h-80 perspective cursor-pointer">
         <div id="cardInner" class="relative w-full h-full preserve-3d flip-fast">
           
-          <!-- Сторона 1: Родной язык (Солнечный мандарин — награда и дофамин) -->
+          <!-- Сторона 1: Родной язык (Солнечный мандарин) -->
           <div class="absolute inset-0 backface-hidden rounded-3xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white shadow-[0_20px_50px_rgba(234,88,12,0.35)] p-6 flex flex-col justify-between border-2 border-orange-300/40">
             <div class="flex justify-between items-center text-xs text-orange-100 font-extrabold tracking-wider uppercase">
               <span class="bg-black/20 px-2.5 py-1 rounded-lg backdrop-blur-sm">РОДНОЙ ЯЗЫК</span>
@@ -101,7 +101,7 @@
             <div class="text-[11px] text-orange-100/90 text-center font-bold">↔ Свайп для следующего</div>
           </div>
 
-          <!-- Сторона 2: Изучаемый язык (Глубокий ультрамарин с золотым текстом — фокус) -->
+          <!-- Сторона 2: Изучаемый язык (Ультрамарин с золотистым текстом) -->
           <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white shadow-[0_20px_50px_rgba(37,99,235,0.4)] p-6 flex flex-col justify-between border-2 border-blue-300/40">
             <div class="flex justify-between items-center text-xs text-blue-100 uppercase font-extrabold tracking-wider">
               <button id="changeLangQuickBtn" class="flex items-center gap-1.5 bg-black/25 hover:bg-black/40 border border-white/20 px-3 py-1.5 rounded-xl active:scale-95 shadow backdrop-blur-sm transition-all">
@@ -117,7 +117,7 @@
         </div>
       </div>
 
-      <!-- Навигация -->
+      <!-- Навигация: 2 кнопки -->
       <div class="grid grid-cols-2 gap-3 mt-4 px-1">
         <button id="flipBtn" class="py-3.5 bg-[#16233B] border border-blue-400/40 hover:border-blue-300 text-blue-200 rounded-2xl text-sm font-extrabold active:scale-95 flex items-center justify-center gap-2 shadow-md transition-all">
           <span>🔄</span> Разворот
@@ -270,7 +270,7 @@
     let isPro = localStorage.getItem("pv_pro") === "true";
     let isAutoSpeech = localStorage.getItem("pv_speech") !== "false";
 
-    let decks = JSON.parse(localStorage.getItem("pv_decks_v20") || "null");
+    let decks = JSON.parse(localStorage.getItem("pv_decks_v25") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
@@ -292,69 +292,97 @@
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_v20", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_v25", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
       localStorage.setItem("pv_speech", isAutoSpeech ? "true" : "false");
     }
 
-    let systemVoices = [];
-    function refreshVoices() {
+    // Системный пул голосов
+    let cachedVoices = [];
+    function loadVoices() {
       if ("speechSynthesis" in window) {
-        systemVoices = window.speechSynthesis.getVoices();
+        cachedVoices = window.speechSynthesis.getVoices();
       }
     }
-    refreshVoices();
+    loadVoices();
     if ("speechSynthesis" in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = refreshVoices;
+      window.speechSynthesis.onvoiceschanged = loadVoices;
     }
 
-    const fastAudio = new Audio();
-    fastAudio.preload = "auto";
+    // Аппаратный аудиоплеер для Telegram WebView
+    const webAudio = new Audio();
+    let audioUnlocked = false;
+
+    function unlockTelegramAudio() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+      webAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+      webAudio.play().catch(() => {});
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.resume();
+      }
+    }
+
+    window.addEventListener("touchstart", unlockTelegramAudio, { once: true });
+    window.addEventListener("click", unlockTelegramAudio, { once: true });
+
+    // Глобальная ссылка для предотвращения сброса сборщиком мусора
+    let activeUtterance = null;
 
     function speakText(text, langCode) {
       if (!text) return;
-      const lang = langCode || "en-US";
-      const shortLang = lang.split("-")[0];
+      unlockTelegramAudio();
 
+      const fullLang = langCode || "en-US";
+      const shortLang = fullLang.split("-")[0].toLowerCase();
+
+      // Метод 1: Нативный синтез с мягким тоном
       if ("speechSynthesis" in window) {
         try {
           window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(text);
-          u.lang = lang;
-          u.rate = 0.92;
-          u.pitch = 0.95;
+          window.speechSynthesis.resume();
 
-          if (systemVoices.length === 0) refreshVoices();
-          
-          const matchVoice = systemVoices.find(v => 
+          activeUtterance = new SpeechSynthesisUtterance(text);
+          activeUtterance.lang = fullLang;
+          activeUtterance.rate = 0.92;
+          activeUtterance.pitch = 0.95;
+
+          if (cachedVoices.length === 0) loadVoices();
+          const femVoice = cachedVoices.find(v => 
             v.lang.toLowerCase().startsWith(shortLang) && 
             /female|natural|samantha|zira|anna|elena|google/i.test(v.name)
           );
-          if (matchVoice) u.voice = matchVoice;
+          if (femVoice) activeUtterance.voice = femVoice;
 
-          let hasStarted = false;
-          u.onstart = () => { hasStarted = true; };
-          window.speechSynthesis.speak(u);
+          let didStart = false;
+          activeUtterance.onstart = () => { didStart = true; };
+          activeUtterance.onerror = () => { fallbackTTS(text, shortLang); };
+
+          window.speechSynthesis.speak(activeUtterance);
 
           setTimeout(() => {
-            if (!hasStarted && !window.speechSynthesis.speaking) {
-              playHighQualityStream(text, shortLang);
+            if (!didStart && !window.speechSynthesis.speaking) {
+              fallbackTTS(text, shortLang);
             }
-          }, 80);
+          }, 120);
           return;
-        } catch (e) {}
+        } catch (e) {
+          fallbackTTS(text, shortLang);
+          return;
+        }
       }
 
-      playHighQualityStream(text, shortLang);
+      fallbackTTS(text, shortLang);
     }
 
-    function playHighQualityStream(text, lang) {
+    // Метод 2: Резервный скоростной поток без CORS-ошибок
+    function fallbackTTS(text, lang) {
       try {
-        fastAudio.pause();
+        webAudio.pause();
         const encoded = encodeURIComponent(text.trim());
-        fastAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
-        fastAudio.playbackRate = 0.95;
-        fastAudio.play().catch(() => {});
+        webAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
+        webAudio.playbackRate = 0.95;
+        webAudio.play().catch(() => {});
       } catch (err) {}
     }
 
@@ -397,7 +425,7 @@
       saveState();
       if (isAutoSpeech) autoSpeakCurrent();
       else {
-        fastAudio.pause();
+        webAudio.pause();
         if ("speechSynthesis" in window) window.speechSynthesis.cancel();
       }
     };
