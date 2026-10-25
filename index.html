@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <!-- Шапка: только лого и название -->
+  <!-- Шапка -->
   <header class="flex items-center justify-between py-2 px-3 bg-[#131E36] rounded-2xl border border-blue-900/40 shadow-lg">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full overflow-hidden border border-blue-400/50 shadow-md shrink-0 flex items-center justify-center bg-[#2563EB]">
@@ -241,7 +241,8 @@
   <script>
     const CONFIG = {
       BOT_TOKEN: "8645559012:AAEP2YvO483QGzouly4PxKXhmWJpjHhhxbA",
-      CHANNEL_ID: "-1004486592937"
+      CHANNEL_ID: "-1004486592937",
+      OWNER_ID: 6845733552
     };
 
     const tg = window.Telegram?.WebApp;
@@ -257,12 +258,21 @@
 
       const user = tg?.initDataUnsafe?.user;
 
+      // Если открыли вне Telegram
       if (!user || !user.id) {
         gateLoader.classList.add("hidden");
         gateDenied.classList.remove("hidden");
         return;
       }
 
+      // Бесплатный вечный доступ создателю (вам)
+      if (Number(user.id) === CONFIG.OWNER_ID) {
+        authGate.classList.add("hidden");
+        renderUI();
+        return;
+      }
+
+      // Проверка подписчиков закрытого канала
       try {
         const response = await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getChatMember?chat_id=${CONFIG.CHANNEL_ID}&user_id=${user.id}`);
         const result = await response.json();
@@ -582,7 +592,7 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // Запуск проверки подписки
+    // Запуск проверки
     verifyMembership();
   </script>
 </body>
