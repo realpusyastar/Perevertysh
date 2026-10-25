@@ -14,7 +14,6 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* Быстрый и комфортный разворот (220мс) */
     .flip-fast {
       transition: transform 0.22s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
@@ -22,10 +21,30 @@
 </head>
 <body class="bg-[#0B0F19] text-slate-100 select-none min-h-screen flex flex-col justify-between p-3.5 max-w-md mx-auto font-sans antialiased">
 
-  <!-- Компактная шапка -->
+  <!-- Компактная шапка с вашим логотипом -->
   <header class="flex justify-between items-center py-2 px-3 bg-[#131A2A] rounded-2xl border border-slate-800/80 shadow-sm">
-    <div class="flex items-center gap-2">
-      <span class="text-base">🧠</span>
+    <div class="flex items-center gap-2.5">
+      <!-- Фирменный логотип -->
+      <div class="w-7 h-7 rounded-full overflow-hidden border border-blue-400/40 shadow-sm shrink-0 flex items-center justify-center bg-blue-600">
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="50" fill="#2563EB"/>
+          <!-- Облачко верхнее -->
+          <path d="M35 25 C25 25 20 35 28 43 C20 48 24 60 36 58 C42 63 56 62 58 52 C65 48 64 36 56 32 C54 23 42 22 35 25 Z" fill="#60A5FA"/>
+          <circle cx="38" cy="38" r="3" fill="#0F172A"/>
+          <circle cx="52" cy="40" r="3" fill="#0F172A"/>
+          <text x="45" y="47" font-size="14" font-weight="900" fill="#FFFFFF" text-anchor="middle">A</text>
+          <!-- Облачко нижнее -->
+          <path d="M60 52 C52 50 46 58 52 66 C45 72 49 83 60 82 C65 87 78 86 81 77 C88 74 87 63 80 59 C78 51 68 50 60 52 Z" fill="#F97316"/>
+          <circle cx="58" cy="70" r="3" fill="#0F172A"/>
+          <circle cx="70" cy="69" r="3" fill="#0F172A"/>
+          <text x="64" y="65" font-size="14" font-weight="900" fill="#FFFFFF" text-anchor="middle">г</text>
+          <!-- Стрелки -->
+          <path d="M22 62 Q16 48 24 36" fill="none" stroke="#22C55E" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="24,32 20,40 28,39" fill="#22C55E"/>
+          <path d="M78 38 Q84 52 76 64" fill="none" stroke="#EAB308" stroke-width="4" stroke-linecap="round"/>
+          <polygon points="76,68 80,60 72,61" fill="#EAB308"/>
+        </svg>
+      </div>
       <h1 class="font-bold text-slate-100 text-sm tracking-wide">Перевёртыш</h1>
     </div>
     
@@ -67,27 +86,26 @@
             </button>
           </div>
         </div>
-        <!-- Индикатор фокуса -->
         <div class="w-full bg-[#131A2A] rounded-full h-1.5 overflow-hidden border border-slate-800">
           <div id="progressBar" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 10%;"></div>
         </div>
       </div>
 
-      <!-- 3D Карточка: Когнитивные цвета -->
+      <!-- 3D Карточка -->
       <div id="cardBox" class="w-full h-80 perspective cursor-pointer">
         <div id="cardInner" class="relative w-full h-full preserve-3d flip-fast">
           
-          <!-- Сторона 1: Родной язык (Тёплый пергамент для отдыха глаз) -->
+          <!-- Сторона 1: Родной язык (Без флага, чистый заголовок) -->
           <div class="absolute inset-0 backface-hidden rounded-3xl bg-[#F8FAFC] text-slate-900 shadow-2xl p-6 flex flex-col justify-between border-2 border-slate-200">
             <div class="flex justify-between items-center text-xs text-slate-500 font-bold tracking-wider uppercase">
-              <span class="flex items-center gap-1">🇷🇺 Родной язык</span>
+              <span>РОДНОЙ ЯЗЫК</span>
               <button onclick="event.stopPropagation(); triggerManualSpeech('front');" class="p-1.5 bg-slate-200/70 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs active:scale-90 transition-transform">🔊</button>
             </div>
             <div id="cardFrontText" class="text-center font-bold text-3xl px-2 break-words text-slate-900 tracking-tight">Привет</div>
             <div class="text-[11px] text-slate-500 text-center font-medium">↔ Свайп для следующего</div>
           </div>
 
-          <!-- Сторона 2: Изучаемый язык (Сапфир для максимальной концентрации) -->
+          <!-- Сторона 2: Изучаемый язык -->
           <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-b from-[#182848] to-[#0E1A32] text-white shadow-2xl p-6 flex flex-col justify-between border border-blue-400/30">
             <div class="flex justify-between items-center text-xs text-blue-200 uppercase font-bold tracking-wider">
               <button id="changeLangQuickBtn" class="flex items-center gap-1.5 bg-blue-950/70 hover:bg-blue-900/80 border border-blue-400/40 px-3 py-1.5 rounded-xl active:scale-95 shadow transition-all">
@@ -103,7 +121,7 @@
         </div>
       </div>
 
-      <!-- Лаконичная нижняя навигация: всего 2 кнопки -->
+      <!-- Лаконичная нижняя навигация: 2 кнопки -->
       <div class="grid grid-cols-2 gap-3 mt-4 px-1">
         <button id="flipBtn" class="py-3.5 bg-[#162032] border border-blue-500/40 hover:border-blue-400/60 text-blue-300 rounded-2xl text-sm font-bold active:scale-95 flex items-center justify-center gap-2 shadow-sm transition-all">
           <span>🔄</span> Разворот
@@ -259,7 +277,7 @@
     let isPro = localStorage.getItem("pv_pro") === "true";
     let isAutoSpeech = localStorage.getItem("pv_speech") !== "false";
 
-    let decks = JSON.parse(localStorage.getItem("pv_decks_v9") || "null");
+    let decks = JSON.parse(localStorage.getItem("pv_decks_v10") || "null");
 
     if (!decks || decks.length === 0) {
       decks = [{
@@ -277,11 +295,11 @@
 
     let activeDeckId = decks[0].id;
     let cardIndex = 0;
-    let isFlipped = true; // Всегда начинаем с изучаемого языка
+    let isFlipped = true;
     let editingCardId = null;
 
     function saveState() {
-      localStorage.setItem("pv_decks_v9", JSON.stringify(decks));
+      localStorage.setItem("pv_decks_v10", JSON.stringify(decks));
       localStorage.setItem("pv_pro", isPro ? "true" : "false");
       localStorage.setItem("pv_speech", isAutoSpeech ? "true" : "false");
     }
@@ -297,7 +315,6 @@
       window.speechSynthesis.onvoiceschanged = loadVoices;
     }
 
-    // Спокойный, мягкий голос
     function getFeminineVoice(langCode) {
       if (!cachedVoices || cachedVoices.length === 0) loadVoices();
       const prefix = langCode.split("-")[0].toLowerCase();
@@ -381,7 +398,6 @@
         activeBadge.classList.remove("flex");
       }
 
-      // Список колод
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
@@ -479,21 +495,18 @@
       }
     }
 
-    // Переворот по тапу
     document.getElementById("cardBox").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
       renderUI(true);
     };
 
-    // Кнопка «🔄 Разворот»
     document.getElementById("flipBtn").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
       renderUI(true);
     };
 
-    // Кнопка «Вперёд ▶»
     document.getElementById("nextBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (!activeDeck || activeDeck.cards.length <= 1) return;
@@ -503,7 +516,6 @@
       renderUI(true);
     };
 
-    // Свайпы
     let touchStartX = 0;
     const cardBox = document.getElementById("cardBox");
     cardBox.addEventListener("touchstart", (e) => {
@@ -526,7 +538,6 @@
       }
     }, { passive: true });
 
-    // Смена языка
     document.getElementById("changeLangQuickBtn").onclick = (e) => {
       e.stopPropagation();
       const activeDeck = decks.find(d => d.id === activeDeckId);
@@ -564,7 +575,6 @@
       document.getElementById("langModal").classList.add("hidden");
     };
 
-    // Переименование блока
     document.getElementById("confirmRenameDeck").onclick = () => {
       const val = document.getElementById("renameDeckInput").value.trim();
       if (!val) return;
@@ -579,7 +589,6 @@
       document.getElementById("renameDeckModal").classList.add("hidden");
     };
 
-    // Карточка (Лимит 10)
     document.getElementById("addCardBtn").onclick = () => {
       const activeDeck = decks.find(d => d.id === activeDeckId);
       if (activeDeck && activeDeck.cards.length >= 10) {
@@ -643,7 +652,6 @@
       document.getElementById("cardModal").classList.add("hidden");
     };
 
-    // Новая колода
     document.getElementById("deckLangSelect").onchange = (e) => {
       if (e.target.value === "other") document.getElementById("customLangBox").classList.remove("hidden");
       else document.getElementById("customLangBox").classList.add("hidden");
@@ -682,7 +690,6 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // PRO
     document.getElementById("buyProBtn").onclick = () => {
       document.getElementById("proModal").classList.remove("hidden");
     };
