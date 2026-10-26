@@ -240,7 +240,7 @@
 
   <script>
     const CONFIG = {
-      BOT_TOKEN: "8645559012:AAEP2YvO483QGzouly4PxKXhmWJpjHhhxbA",
+      BOT_TOKEN: "8712776761:AAHcXSbZEE2vl5cqTb2Eju_99KoYRZ8q8P0",
       CHANNEL_ID: "-1004486592937",
       OWNER_ID: 6845733552
     };
@@ -272,7 +272,7 @@
         return;
       }
 
-      // Проверка подписчиков закрытого канала
+      // Проверка подписчиков закрытого канала через технического бота-вахтёра
       try {
         const response = await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getChatMember?chat_id=${CONFIG.CHANNEL_ID}&user_id=${user.id}`);
         const result = await response.json();
