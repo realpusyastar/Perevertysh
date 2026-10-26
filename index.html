@@ -16,9 +16,8 @@
     }
     body {
       font-family: 'Nunito', sans-serif;
-      background: radial-gradient(circle at 50% 20%, #1a1e4a 0%, #0d102b 50%, #060818 100%);
+      background: radial-gradient(circle at 50% 15%, #1d2150 0%, #0d102b 50%, #060818 100%);
       min-height: 100vh;
-      min-height: -webkit-fill-available;
     }
     .font-magic { font-family: 'Comfortaa', cursive; }
     .perspective { perspective: 1200px; }
@@ -30,9 +29,16 @@
     .rotate-y-180 { transform: rotateY(180deg); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .flip-smooth { transition: transform 0.35s cubic-bezier(0.34, 1.25, 0.64, 1); }
+    
+    /* Быстрый разворот карточки */
+    .flip-smooth { transition: transform 0.18s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
 
-    /* Рамка и золотые узоры как на макете */
+    /* Геометрия карточки */
+    .game-card-box {
+      width: 100%;
+      height: 380px !important;
+      position: relative;
+    }
     .card-outer-border {
       border: 3px solid #082d49;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 0 1.5px rgba(254, 240, 138, 0.5);
@@ -70,24 +76,46 @@
     </div>
   </div>
 
-  <!-- Верхняя плашка -->
+  <!-- Шапка с оригинальным логотипом -->
   <header class="flex items-center justify-between py-2 px-3.5 bg-[#14193d]/80 rounded-2xl border border-indigo-500/30 shadow-lg shrink-0">
     <div class="flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-xl overflow-hidden border border-amber-300/50 shadow shrink-0 flex items-center justify-center bg-gradient-to-tr from-cyan-600 to-indigo-600">
-        <span class="text-lg">🪐</span>
+      <div class="w-9 h-9 rounded-full overflow-hidden border border-blue-400/60 shadow shrink-0 flex items-center justify-center bg-[#2563EB]">
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="49" fill="#2563EB"/>
+          <!-- Зеленая стрелка -->
+          <path d="M22 62 C16 48 20 34 26 26" fill="none" stroke="#22C55E" stroke-width="5" stroke-linecap="round"/>
+          <polygon points="26,20 18,30 28,32" fill="#22C55E"/>
+          <!-- Оранжевая стрелка -->
+          <path d="M78 38 C84 52 80 66 74 74" fill="none" stroke="#F97316" stroke-width="5" stroke-linecap="round"/>
+          <polygon points="74,80 82,70 72,68" fill="#F97316"/>
+          <!-- Голубое облачко с А -->
+          <path d="M36 20 C24 20 20 32 29 41 C20 47 25 61 38 58 C46 64 62 62 64 49 C72 45 70 31 60 27 C58 17 44 16 36 20 Z" fill="#60A5FA"/>
+          <circle cx="38" cy="35" r="3.5" fill="#0F172A"/>
+          <circle cx="54" cy="37" r="3.5" fill="#0F172A"/>
+          <circle cx="39" cy="34" r="1.2" fill="#FFFFFF"/>
+          <circle cx="55" cy="36" r="1.2" fill="#FFFFFF"/>
+          <text x="46" y="46" font-size="16" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">A</text>
+          <!-- Оранжевое облачко с г -->
+          <path d="M62 48 C51 46 44 56 52 66 C43 73 48 87 62 85 C68 91 84 90 87 79 C95 75 94 62 85 57 C82 48 71 46 62 48 Z" fill="#FB923C"/>
+          <circle cx="59" cy="69" r="3.5" fill="#0F172A"/>
+          <circle cx="73" cy="68" r="3.5" fill="#0F172A"/>
+          <circle cx="60" cy="68" r="1.2" fill="#FFFFFF"/>
+          <circle cx="74" cy="67" r="1.2" fill="#FFFFFF"/>
+          <text x="66" y="62" font-size="16" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">г</text>
+        </svg>
       </div>
       <h1 class="font-black text-amber-200 text-sm tracking-wider uppercase font-magic">Перевёртыш</h1>
     </div>
   </header>
 
-  <!-- Список блоков карточек -->
+  <!-- Блоки тем -->
   <div class="flex gap-2 overflow-x-auto py-2 no-scrollbar shrink-0" id="decksContainer"></div>
 
   <!-- Игровая зона с карточкой -->
   <main class="flex-1 flex flex-col justify-center items-center w-full my-auto">
     <div id="cardWrapper" class="w-full flex flex-col">
       
-      <!-- Прогресс и пузырёк -->
+      <!-- Прогресс и пузырёк-колба -->
       <div class="mb-3 px-1 w-full">
         <div class="flex items-center justify-between text-xs text-indigo-200 font-extrabold mb-1">
           <span id="cardCounter" class="tracking-wide text-amber-200 font-black">Слово 1 из 3</span>
@@ -101,7 +129,6 @@
           </div>
         </div>
 
-        <!-- Дорожка со скользящей колбой -->
         <div class="relative w-full h-11 flex items-center">
           <!-- Пузырёк -->
           <div id="potionFlask" class="absolute -top-1 -ml-5 w-10 h-10 transition-all duration-300 ease-out pointer-events-none drop-shadow-[0_4px_10px_rgba(34,211,238,0.6)] z-20" style="left: 10%;">
@@ -134,15 +161,15 @@
         </div>
       </div>
 
-      <!-- 3D Карточка фиксированной высоты -->
-      <div id="cardBox" class="w-full perspective cursor-pointer touch-none relative select-none" style="height: 380px;">
+      <!-- 3D Карточка -->
+      <div id="cardBox" class="game-card-box perspective cursor-pointer touch-none select-none">
         <div id="cardInner" class="relative w-full h-full preserve-3d flip-smooth">
           
-          <!-- ЛИЦЕВАЯ СТОРОНА: Изучаемый язык (Синяя) -->
+          <!-- Лицо (Синяя - изучаемый язык) -->
           <div class="absolute inset-0 backface-hidden rounded-[30px] bg-gradient-to-b from-[#1479A8] via-[#0F5A86] to-[#0A3D61] text-white card-outer-border p-3.5 flex flex-col justify-between">
             <div class="card-inner-frame w-full h-full p-4 flex flex-col justify-between relative overflow-hidden">
               <div class="flex items-center justify-between z-10">
-                <button id="changeLangQuickBtn" class="flex items-center gap-1.5 bg-[#072840]/90 border border-amber-300/50 px-3 py-1.5 rounded-xl active:scale-95 shadow backdrop-blur-sm">
+                <button id="changeLangQuickBtn" class="flex items-center gap-1.5 bg-[#072840]/90 border border-amber-300/50 px-3 py-1.5 rounded-xl active:scale-95 shadow">
                   <span id="targetLangLabel" class="text-amber-200 font-black text-xs tracking-wider uppercase">АНГЛИЙСКИЙ</span>
                   <span class="text-[11px]">✏️</span>
                 </button>
@@ -155,19 +182,19 @@
 
               <div class="text-center z-10">
                 <div class="text-xs text-amber-100 font-extrabold tracking-wide drop-shadow">Тапните для проверки перевода</div>
-                <div class="text-[10px] text-cyan-200/80 font-medium mt-0.5">↔ или ↕ свайп для перелистывания</div>
+                <div class="text-[10px] text-cyan-200/80 font-medium mt-0.5">↔ Свайп для следующего</div>
               </div>
 
               <div class="absolute -bottom-8 -right-8 w-44 h-44 rounded-full bg-cyan-400/10 pointer-events-none blur-xl"></div>
             </div>
           </div>
 
-          <!-- ОБОРОТНАЯ СТОРОНА: Родной язык (Малиново-розовая сзади) -->
+          <!-- Оборот (Малиново-розовая сзади - родной язык) -->
           <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-[30px] bg-gradient-to-b from-[#D12B5D] via-[#A81D47] to-[#781031] text-white card-outer-border-pink p-3.5 flex flex-col justify-between">
             <div class="card-inner-frame w-full h-full p-4 flex flex-col justify-between relative overflow-hidden">
               <div class="flex items-center justify-between z-10">
                 <span class="bg-[#4d071e]/90 border border-amber-300/50 px-3 py-1.5 rounded-xl text-amber-200 font-black text-xs tracking-wider uppercase">
-                  РУССКИЙ ✏️
+                  РУССКИЙ
                 </span>
               </div>
 
@@ -178,7 +205,7 @@
 
               <div class="text-center z-10">
                 <div class="text-xs text-rose-100 font-extrabold tracking-wide drop-shadow">Тапните, чтобы перевернуть обратно</div>
-                <div class="text-[10px] text-pink-200/80 font-medium mt-0.5">↔ или ↕ свайп для перелистывания</div>
+                <div class="text-[10px] text-pink-200/80 font-medium mt-0.5">↔ Свайп для следующего</div>
               </div>
 
               <div class="absolute -bottom-8 -left-8 w-44 h-44 rounded-full bg-pink-400/10 pointer-events-none blur-xl"></div>
@@ -188,7 +215,7 @@
         </div>
       </div>
 
-      <!-- Кнопки управления снизу -->
+      <!-- Кнопки управления -->
       <div class="flex items-center gap-2.5 mt-4 w-full">
         <!-- Разворот -->
         <button id="flipBtn" class="flex-1 py-3.5 bg-gradient-to-b from-[#3E58B0] to-[#25397A] border-2 border-indigo-300/40 text-indigo-100 rounded-2xl text-xs sm:text-sm font-black active:scale-95 flex items-center justify-center gap-1.5 shadow-[0_8px_16px_rgba(0,0,0,0.4)]">
@@ -196,7 +223,7 @@
         </button>
 
         <!-- Перемешать -->
-        <button id="shuffleBtn" title="Перемешать карточки" class="w-13 h-12 px-3.5 bg-gradient-to-b from-[#E65656] to-[#AD2525] border-2 border-rose-300/40 text-amber-100 rounded-2xl text-xl flex items-center justify-center shrink-0 shadow-[0_8px_16px_rgba(0,0,0,0.4)] active:scale-90 font-black">
+        <button id="shuffleBtn" title="Перемешать" class="w-13 h-12 px-3.5 bg-gradient-to-b from-[#E65656] to-[#AD2525] border-2 border-rose-300/40 text-amber-100 rounded-2xl text-xl flex items-center justify-center shrink-0 shadow-[0_8px_16px_rgba(0,0,0,0.4)] active:scale-90 font-black">
           🔀
         </button>
 
@@ -208,7 +235,7 @@
 
     </div>
 
-    <!-- Заглушка, если пусто -->
+    <!-- Заглушка для пустого блока -->
     <div id="emptyBlockNotice" class="hidden text-center p-8 bg-[#14193d]/90 rounded-3xl border-2 border-dashed border-indigo-400/40 max-w-xs shadow-2xl">
       <div class="text-4xl mb-2">✨</div>
       <h3 class="font-black text-amber-200 text-base mb-1">В блоке нет слов</h3>
@@ -553,30 +580,23 @@
 
     document.getElementById("nextBtn").onclick = goNextCard;
 
-    // Свайп в 4 направлениях
+    // ТОЛЬКО ГОРИЗОНТАЛЬНЫЙ СВАЙП (влево / вправо)
     let touchStartX = 0;
-    let touchStartY = 0;
     const cardBox = document.getElementById("cardBox");
 
     cardBox.addEventListener("touchstart", (e) => {
       touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     cardBox.addEventListener("touchend", (e) => {
       const diffX = touchStartX - e.changedTouches[0].clientX;
-      const diffY = touchStartY - e.changedTouches[0].clientY;
-      const threshold = 35;
+      const threshold = 40;
 
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > threshold) {
-          if (diffX > 0) goNextCard();
-          else goPrevCard();
-        }
-      } else {
-        if (Math.abs(diffY) > threshold) {
-          if (diffY > 0) goNextCard();
-          else goPrevCard();
+      if (Math.abs(diffX) > threshold) {
+        if (diffX > 0) {
+          goNextCard(); // свайп влево -> следующая карточка
+        } else {
+          goPrevCard(); // свайп вправо -> предыдущая карточка
         }
       }
     }, { passive: true });
@@ -699,6 +719,7 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
+    // Запуск проверки
     verifyMembership();
   </script>
 </body>
