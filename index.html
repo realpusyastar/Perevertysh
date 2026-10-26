@@ -30,10 +30,8 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* Быстрый разворот карточки */
     .flip-smooth { transition: transform 0.18s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
 
-    /* Геометрия карточки */
     .game-card-box {
       width: 100%;
       height: 380px !important;
@@ -76,26 +74,22 @@
     </div>
   </div>
 
-  <!-- Шапка с оригинальным логотипом -->
-  <header class="flex items-center justify-between py-2 px-3.5 bg-[#14193d]/80 rounded-2xl border border-indigo-500/30 shadow-lg shrink-0">
-    <div class="flex items-center gap-2.5">
+  <!-- Шапка с переключателем режима -->
+  <header class="flex items-center justify-between py-2 px-3 bg-[#14193d]/80 rounded-2xl border border-indigo-500/30 shadow-lg shrink-0">
+    <div class="flex items-center gap-2">
       <div class="w-9 h-9 rounded-full overflow-hidden border border-blue-400/60 shadow shrink-0 flex items-center justify-center bg-[#2563EB]">
         <svg viewBox="0 0 100 100" class="w-full h-full">
           <circle cx="50" cy="50" r="49" fill="#2563EB"/>
-          <!-- Зеленая стрелка -->
           <path d="M22 62 C16 48 20 34 26 26" fill="none" stroke="#22C55E" stroke-width="5" stroke-linecap="round"/>
           <polygon points="26,20 18,30 28,32" fill="#22C55E"/>
-          <!-- Оранжевая стрелка -->
           <path d="M78 38 C84 52 80 66 74 74" fill="none" stroke="#F97316" stroke-width="5" stroke-linecap="round"/>
           <polygon points="74,80 82,70 72,68" fill="#F97316"/>
-          <!-- Голубое облачко с А -->
           <path d="M36 20 C24 20 20 32 29 41 C20 47 25 61 38 58 C46 64 62 62 64 49 C72 45 70 31 60 27 C58 17 44 16 36 20 Z" fill="#60A5FA"/>
           <circle cx="38" cy="35" r="3.5" fill="#0F172A"/>
           <circle cx="54" cy="37" r="3.5" fill="#0F172A"/>
           <circle cx="39" cy="34" r="1.2" fill="#FFFFFF"/>
           <circle cx="55" cy="36" r="1.2" fill="#FFFFFF"/>
           <text x="46" y="46" font-size="16" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">A</text>
-          <!-- Оранжевое облачко с г -->
           <path d="M62 48 C51 46 44 56 52 66 C43 73 48 87 62 85 C68 91 84 90 87 79 C95 75 94 62 85 57 C82 48 71 46 62 48 Z" fill="#FB923C"/>
           <circle cx="59" cy="69" r="3.5" fill="#0F172A"/>
           <circle cx="73" cy="68" r="3.5" fill="#0F172A"/>
@@ -104,8 +98,14 @@
           <text x="66" y="62" font-size="16" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">г</text>
         </svg>
       </div>
-      <h1 class="font-black text-amber-200 text-sm tracking-wider uppercase font-magic">Перевёртыш</h1>
+      <h1 class="font-black text-amber-200 text-xs sm:text-sm tracking-wider uppercase font-magic">Перевёртыш</h1>
     </div>
+
+    <!-- Кнопка переключения режима свайпа -->
+    <button id="modeToggleBtn" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#1d2352] border border-cyan-400/40 text-cyan-200 active:scale-95 text-[11px] font-black shadow transition-all">
+      <span id="modeIcon">📖</span>
+      <span id="modeLabel">Пошагово</span>
+    </button>
   </header>
 
   <!-- Блоки тем -->
@@ -115,7 +115,7 @@
   <main class="flex-1 flex flex-col justify-center items-center w-full my-auto">
     <div id="cardWrapper" class="w-full flex flex-col">
       
-      <!-- Прогресс и пузырёк-колба -->
+      <!-- Прогресс и пузырёк -->
       <div class="mb-3 px-1 w-full">
         <div class="flex items-center justify-between text-xs text-indigo-200 font-extrabold mb-1">
           <span id="cardCounter" class="tracking-wide text-amber-200 font-black">Слово 1 из 3</span>
@@ -130,7 +130,6 @@
         </div>
 
         <div class="relative w-full h-11 flex items-center">
-          <!-- Пузырёк -->
           <div id="potionFlask" class="absolute -top-1 -ml-5 w-10 h-10 transition-all duration-300 ease-out pointer-events-none drop-shadow-[0_4px_10px_rgba(34,211,238,0.6)] z-20" style="left: 10%;">
             <svg viewBox="0 0 100 120" class="w-full h-full overflow-visible">
               <defs>
@@ -154,7 +153,6 @@
             </svg>
           </div>
 
-          <!-- Полоса шкалы -->
           <div class="w-full bg-[#101435] rounded-full h-2.5 overflow-hidden border border-indigo-500/30 p-[1px]">
             <div id="progressBar" class="bg-gradient-to-r from-teal-400 via-cyan-400 to-sky-300 h-full rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(56,189,248,0.7)]" style="width: 10%;"></div>
           </div>
@@ -175,14 +173,13 @@
                 </button>
               </div>
 
-              <!-- Текст слова -->
               <div id="cardBackText" class="text-center font-black text-3xl sm:text-4xl px-2 break-words text-white tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10 my-auto">
                 How are you?
               </div>
 
               <div class="text-center z-10">
                 <div class="text-xs text-amber-100 font-extrabold tracking-wide drop-shadow">Тапните для проверки перевода</div>
-                <div class="text-[10px] text-cyan-200/80 font-medium mt-0.5">↔ Свайп для следующего</div>
+                <div id="cardSwipeHintFront" class="text-[10px] text-cyan-200/80 font-medium mt-0.5">↔ Свайп для следующего</div>
               </div>
 
               <div class="absolute -bottom-8 -right-8 w-44 h-44 rounded-full bg-cyan-400/10 pointer-events-none blur-xl"></div>
@@ -198,14 +195,13 @@
                 </span>
               </div>
 
-              <!-- Перевод -->
               <div id="cardFrontText" class="text-center font-black text-3xl sm:text-4xl px-2 break-words text-[#FEF08A] tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10 my-auto">
                 Как дела?
               </div>
 
               <div class="text-center z-10">
                 <div class="text-xs text-rose-100 font-extrabold tracking-wide drop-shadow">Тапните, чтобы перевернуть обратно</div>
-                <div class="text-[10px] text-pink-200/80 font-medium mt-0.5">↔ Свайп для следующего</div>
+                <div id="cardSwipeHintBack" class="text-[10px] text-pink-200/80 font-medium mt-0.5">↔ Свайп для следующего</div>
               </div>
 
               <div class="absolute -bottom-8 -left-8 w-44 h-44 rounded-full bg-pink-400/10 pointer-events-none blur-xl"></div>
@@ -217,17 +213,14 @@
 
       <!-- Кнопки управления -->
       <div class="flex items-center gap-2.5 mt-4 w-full">
-        <!-- Разворот -->
         <button id="flipBtn" class="flex-1 py-3.5 bg-gradient-to-b from-[#3E58B0] to-[#25397A] border-2 border-indigo-300/40 text-indigo-100 rounded-2xl text-xs sm:text-sm font-black active:scale-95 flex items-center justify-center gap-1.5 shadow-[0_8px_16px_rgba(0,0,0,0.4)]">
           <span class="text-base">🔄</span> <span>Разворот</span>
         </button>
 
-        <!-- Перемешать -->
         <button id="shuffleBtn" title="Перемешать" class="w-13 h-12 px-3.5 bg-gradient-to-b from-[#E65656] to-[#AD2525] border-2 border-rose-300/40 text-amber-100 rounded-2xl text-xl flex items-center justify-center shrink-0 shadow-[0_8px_16px_rgba(0,0,0,0.4)] active:scale-90 font-black">
           🔀
         </button>
 
-        <!-- Вперёд -->
         <button id="nextBtn" class="flex-1 py-3.5 bg-gradient-to-b from-[#3BD7A3] to-[#1E9E74] border-2 border-emerald-200/50 text-[#053825] rounded-2xl text-xs sm:text-sm font-black active:scale-95 flex items-center justify-center gap-1.5 shadow-[0_8px_20px_rgba(30,158,116,0.4)]">
           <span>Вперёд</span> <span class="text-sm">▶</span>
         </button>
@@ -412,6 +405,32 @@
     let isFlipped = false;
     let editingCardId = null;
 
+    // Режим разворота: 'step' (пошагово: слово -> перевод -> след.слово) или 'classic' (тренажер)
+    let flipMode = localStorage.getItem("pv_flip_mode") || "step";
+
+    function updateModeButtonUI() {
+      const modeLabel = document.getElementById("modeLabel");
+      const modeIcon = document.getElementById("modeIcon");
+      const modeBtn = document.getElementById("modeToggleBtn");
+
+      if (flipMode === "step") {
+        modeLabel.textContent = "Пошагово";
+        modeIcon.textContent = "📖";
+        modeBtn.className = "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-cyan-600/30 border border-cyan-400 text-cyan-200 active:scale-95 text-[11px] font-black shadow";
+      } else {
+        modeLabel.textContent = "Тренажёр";
+        modeIcon.textContent = "⚡";
+        modeBtn.className = "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#1d2352] border border-indigo-400/40 text-indigo-200 active:scale-95 text-[11px] font-black shadow";
+      }
+    }
+
+    document.getElementById("modeToggleBtn").onclick = () => {
+      haptic("medium");
+      flipMode = flipMode === "step" ? "classic" : "step";
+      localStorage.setItem("pv_flip_mode", flipMode);
+      updateModeButtonUI();
+    };
+
     function saveState() {
       localStorage.setItem("pv_decks_pure", JSON.stringify(decks));
     }
@@ -444,6 +463,8 @@
     }
 
     function renderUI() {
+      updateModeButtonUI();
+
       const container = document.getElementById("decksContainer");
       container.innerHTML = "";
 
@@ -533,6 +554,7 @@
       else inner.classList.remove("rotate-y-180");
     }
 
+    // Тап по самой карточке всегда переворачивает её
     document.getElementById("cardBox").onclick = () => {
       haptic("medium");
       isFlipped = !isFlipped;
@@ -560,27 +582,59 @@
       renderUI();
     };
 
-    function goNextCard() {
+    // Движение ВПЕРЁД (свайп влево или кнопка «Вперёд»)
+    function goForward() {
       const activeDeck = decks.find(d => d.id === activeDeckId);
-      if (!activeDeck || activeDeck.cards.length <= 1) return;
+      if (!activeDeck || activeDeck.cards.length === 0) return;
       haptic("light");
-      isFlipped = false;
-      cardIndex = (cardIndex + 1) % activeDeck.cards.length;
-      renderUI();
+
+      if (flipMode === "step") {
+        // Пошагово: если открыто лицо -> переворачиваем на перевод
+        // если открыт перевод -> переходим к следующему слову и показываем лицо
+        if (!isFlipped) {
+          isFlipped = true;
+          renderUI();
+        } else {
+          isFlipped = false;
+          cardIndex = (cardIndex + 1) % activeDeck.cards.length;
+          renderUI();
+        }
+      } else {
+        // Тренажер: сразу следующее слово
+        isFlipped = false;
+        cardIndex = (cardIndex + 1) % activeDeck.cards.length;
+        renderUI();
+      }
     }
 
-    function goPrevCard() {
+    // Движение НАЗАД (свайп вправо)
+    function goBackward() {
       const activeDeck = decks.find(d => d.id === activeDeckId);
-      if (!activeDeck || activeDeck.cards.length <= 1) return;
+      if (!activeDeck || activeDeck.cards.length === 0) return;
       haptic("light");
-      isFlipped = false;
-      cardIndex = (cardIndex - 1 + activeDeck.cards.length) % activeDeck.cards.length;
-      renderUI();
+
+      if (flipMode === "step") {
+        // Пошагово в обратную сторону: если был перевод -> возвращаем на лицо этого же слова
+        // если было лицо -> переходим к предыдущему слову и показываем его перевод
+        if (isFlipped) {
+          isFlipped = false;
+          renderUI();
+        } else {
+          isFlipped = true;
+          cardIndex = (cardIndex - 1 + activeDeck.cards.length) % activeDeck.cards.length;
+          renderUI();
+        }
+      } else {
+        // Тренажер: сразу предыдущее слово
+        isFlipped = false;
+        cardIndex = (cardIndex - 1 + activeDeck.cards.length) % activeDeck.cards.length;
+        renderUI();
+      }
     }
 
-    document.getElementById("nextBtn").onclick = goNextCard;
+    document.getElementById("nextBtn").onclick = goForward;
 
-    // ТОЛЬКО ГОРИЗОНТАЛЬНЫЙ СВАЙП (влево / вправо)
+    // Горизонтальный свайп
     let touchStartX = 0;
     const cardBox = document.getElementById("cardBox");
 
@@ -594,9 +648,9 @@
 
       if (Math.abs(diffX) > threshold) {
         if (diffX > 0) {
-          goNextCard(); // свайп влево -> следующая карточка
+          goForward(); // свайп влево -> шаг вперёд
         } else {
-          goPrevCard(); // свайп вправо -> предыдущая карточка
+          goBackward(); // свайп вправо -> шаг назад
         }
       }
     }, { passive: true });
@@ -719,7 +773,6 @@
       document.getElementById("deckModal").classList.add("hidden");
     };
 
-    // Запуск проверки
     verifyMembership();
   </script>
 </body>
